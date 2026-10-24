@@ -1,0 +1,55 @@
+name: VimStyle checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-vim-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt 5 build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build pkg-config qtbase5-dev qtdeclarative5-dev qttools5-dev libqt5svg5-dev libhunspell-dev libquazip5-dev libpoppler-qt5-dev zlib1g-dev libxkbcommon-dev
+      - name: Configure
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Debug -DQT_VERSION_MAJOR=5 -DTEXSTUDIO_ENABLE_TESTS=ON -DTEXSTUDIO_BUILD_ADWAITA=OFF -DCMAKE_DISABLE_FIND_PACKAGE_GitInfo=ON
+      - name: Build
+        run: cmake --build build-linux -- -j2
+      - name: Vim regression tests
+        run: python3 scripts/vimstyle/test_linux.py build-linux .
+
+  windows-vim-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        id: msys2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-5compat
+            mingw-w64-ucrt-x86_64-qt6-declarative
+            mingw-w64-ucrt-x86_64-qt6-tools
+            mingw-w64-ucrt-x86_64-qt6-svg
+            mingw-w64-ucrt-x86_64-hunspell
+            mingw-w64-ucrt-x86_64-quazip-qt6
+            mingw-w64-ucrt-x86_64-poppler-qt6
+      - name: Configure and build
+        shell: pwsh
+        run: ./scripts/vimstyle/build_windows.ps1 -Sdk '${{ steps.msys2.outputs.msys2-location }}/ucrt64' -Jobs 2
+      - name: Run Vim regression tests
+        shell: pwsh
+        run: python scripts/vimstyle/test_windows.py '${{ steps.msys2.outputs.msys2-location }}/ucrt64' . build-windows
