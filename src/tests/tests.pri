@@ -5,6 +5,7 @@
 	message("tests are enabled")
 	QT += testlib
 	SOURCES += \
+        src/tests/viminputbinding_t.cpp \
 		src/tests/codesnippet_t.cpp \
 		src/tests/encoding_t.cpp \
 		src/tests/execprogram_t.cpp \
@@ -31,6 +32,7 @@
                 src/tests/testutil.cpp \
                 src/tests/latexdocument_t.cpp
 	HEADERS += \
+        src/tests/viminputbinding_t.h \
 		src/tests/execprogram_t.h \
 		src/tests/qsearchreplacepanel_t.h \
 		src/tests/updatechecker_t.h \
@@ -66,5 +68,8 @@
 
 SOURCES += \
     $$PWD/latexstyleparser_t.cpp
+
+DISTFILES += $$PWD/vim_object_oracle.json
+DISTFILES += $$PWD/generate_vim_object_oracle.py
 
 

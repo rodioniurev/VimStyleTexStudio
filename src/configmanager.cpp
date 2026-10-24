@@ -525,6 +525,7 @@ ConfigManager::ConfigManager(QObject *parent): QObject (parent),
 	registerOption("Editor/Line Number Multiples", &editorConfig->showlinemultiples, 0);
 	registerOption("Editor/Cursor Surrounding Lines", &editorConfig->cursorSurroundLines, 5);
 	registerOption("Editor/BoldCursor", &editorConfig->boldCursor, true, &pseudoDialog->checkBoxBoldCursor);
+    registerOption("Editor/VimMode", &editorConfig->vimMode, false, &pseudoDialog->checkBoxVimMode);
     registerOption("Editor/CenterDocumentInEditor", &editorConfig->centerDocumentInEditor, false, &pseudoDialog->checkBoxCenterDocumentInEditor);
 	registerOption("Editor/Auto Indent", &editorConfig->autoindent, true);
 	registerOption("Editor/Weak Indent", &editorConfig->weakindent, false);

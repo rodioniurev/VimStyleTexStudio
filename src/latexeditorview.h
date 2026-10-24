@@ -35,6 +35,7 @@ class LatexCompleter;
 class SpellerUtility;
 class SpellerManager;
 class DefaultInputBinding;
+class VimInputBinding;
 class LatexEditorViewConfig;
 class Macro;
 class MacroExecContext;
@@ -218,6 +219,7 @@ private:
 	int curChangePos;
 
 	LatexEditorViewConfig *config;
+    VimInputBinding *vimInputBinding;
 
 	bibtexReader *bibReader;
 	QPoint lastPos;
@@ -331,6 +333,7 @@ public:
 	void checkRTLLTRLanguageSwitching();
 
 signals:
+    void vimCommandRequested(const QString &command, const QString &argument);
 	void lineHandleDeleted(QDocumentLineHandle *l);
 	void showMarkTooltipForLogMessage(QList<int> logMessages);
 	void needCitation(const QString &id);//request a new citation

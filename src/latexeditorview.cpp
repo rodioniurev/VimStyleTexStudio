@@ -32,6 +32,7 @@
 #include "qcodeedit.h"
 #include "qeditor.h"
 #include "qeditorinputbinding.h"
+#include "viminputbinding.h"
 #include "qlinemarkpanel.h"
 #include "qlinenumberpanel.h"
 #include "qfoldpanel.h"
@@ -842,7 +843,12 @@ LatexEditorView::LatexEditorView(QWidget *parent, LatexEditorViewConfig *aconfig
 	//editor->setFlag(QEditor::CursorJumpPastWrap,false);
 	editor->disableAccentHack(config->hackDisableAccentWorkaround);
 
-	editor->setInputBinding(defaultInputBinding);
+    vimInputBinding = new VimInputBinding(editor);
+    editor->setInputBinding(vimInputBinding);
+    editor->addInputBinding(defaultInputBinding);
+    connect(vimInputBinding, &VimInputBinding::modeChanged, statusPanel, QOverload<>::of(&QWidget::update));
+    connect(vimInputBinding, &VimInputBinding::escapePressed, this, [] { if (completer) completer->close(); });
+    connect(vimInputBinding, &VimInputBinding::applicationCommand, this, &LatexEditorView::vimCommandRequested);
 	defaultInputBinding->completerConfig = completer->getConfig();
 	defaultInputBinding->editorViewConfig = config;
 	Q_ASSERT(defaultInputBinding->completerConfig);
@@ -1893,6 +1899,7 @@ QList<int> LatexEditorView::formatsList;
 
 void LatexEditorView::updateSettings()
 {
+    vimInputBinding->setEnabled(config->vimMode);
 	lineNumberPanel->setVerboseMode(config->showlinemultiples != 10);
 	editor->setFont(QFont(config->fontFamily, config->fontSize));
 	editor->setLineWrapping(config->wordwrap > 0);

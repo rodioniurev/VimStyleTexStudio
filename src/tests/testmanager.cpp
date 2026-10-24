@@ -13,6 +13,7 @@
 #include "qdocumentsearch_t.h"
 #include "qsearchreplacepanel_t.h"
 #include "qeditor_t.h"
+#include "viminputbinding_t.h"
 #include "latexcompleter_t.h"
 #include "latexeditorview_t.h"
 #include "latexeditorview_bm.h"
@@ -89,6 +90,7 @@ QString TestManager::execute(TestLevel level, LatexEditorView* edView, QCodeEdit
             << new QDocumentSearchTest(editor,level==TL_ALL)
             << new QSearchReplacePanelTest(codeedit,level==TL_ALL)
             << new QEditorTest(editor,level==TL_ALL)
+            << new VimInputBindingTest()
             << new LatexEditorViewTest(edView)
             << new LatexDocumentTest(edView)
             << new LatexCompleterTest(edView)

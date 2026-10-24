@@ -25,7 +25,7 @@
 class CompleterInputBinding: public QEditorInputBinding
 {
 public:
-    CompleterInputBinding(): active(false), showAlways(false), showMostUsed(0), completer(nullptr), editor(nullptr), oldBinding(nullptr), curStart(0), maxWritten(0), curLineNumber(0) {}
+    CompleterInputBinding(): active(false), showAlways(false), showMostUsed(0), completer(nullptr), editor(nullptr), curStart(0), maxWritten(0), curLineNumber(0) {}
 	virtual QString id() const
 	{
 		return "TXS::CompleterInputBinding";
@@ -528,7 +528,7 @@ public:
 			} else {
 				int curLength = getCurWord().length();
 				resetBinding();
-				return curLength >= 2 &&  oldBinding->keyPressEvent(event, editor); //call old input binding for long words (=> key replacements after completions, but the user can still write \")
+				return curLength >= 2 &&  forwardKeyPress(event); //call old input binding for long words (=> key replacements after completions, but the user can still write \")
 			}
 		}
 		completer->filterList(getCurWord(), showMostUsed);
@@ -674,7 +674,8 @@ public:
 		//reenable auto close chars
         if(completer)
             editor->setFlag(QEditor::AutoCloseChars, completer->editorAutoCloseChars);
-		editor->setInputBinding(oldBinding);
+        editor->setInputBinding(nullptr);
+        for (auto *binding : oldBindings) editor->addInputBinding(binding);
         if (completer && completer->widget && completer->widget->isVisible()){
             completer->widget->hide();
 			editor->setFocus();
@@ -700,7 +701,7 @@ public:
 		active = true;
 		completer = caller;
 		editor = edit;
-        oldBinding = (editor->inputBindings().count() > 0 ? editor->inputBindings()[0] : nullptr);
+        oldBindings = editor->inputBindings();
 		editor->setInputBinding(this);
 		curStart = start > 0 ? start : 0;
 		maxWritten = editor->cursor().columnNumber();
@@ -727,7 +728,13 @@ private:
 	int showMostUsed;
 	LatexCompleter *completer;
 	QEditor *editor;
-	QEditorInputBindingInterface *oldBinding;
+    bool forwardKeyPress(QKeyEvent *event)
+    {
+        for (auto *binding : oldBindings)
+            if (binding->keyPressEvent(event, editor)) return true;
+        return false;
+    }
+    QList<QEditorInputBindingInterface *> oldBindings;
 	QString completionWord;
 	int curStart, maxWritten;
 	int curLineNumber;

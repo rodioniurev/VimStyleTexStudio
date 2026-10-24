@@ -2108,6 +2108,26 @@ void Texstudio::configureNewEditorView(LatexEditorView *edit)
     connect(edit->editor, SIGNAL(redoAvailable(bool)), this, SLOT(updateUndoRedoStatus()));
     connect(edit->editor->document(), SIGNAL(lineEndingChanged(int)), this, SLOT(newDocumentLineEnding()));
     connect(edit->editor, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
+    connect(edit, &LatexEditorView::vimCommandRequested, this, [this, edit](const QString &command, const QString &argument) {
+        if (currentEditorView() != edit) return;
+        if (command == "w" || command == "write" || command == "wq" || command == "x" || command == "xit") {
+            const bool close = command == "wq" || command == "x" || command == "xit";
+            if (!argument.isEmpty()) fileSaveAs(argument);
+            else if (command == "w" || command == "write" || command == "wq" || edit->editor->isContentModified()) fileSave();
+            if (close && !edit->editor->isContentModified()
+                && (command == "x" || command == "xit" || !edit->editor->fileName().isEmpty())) fileClose();
+        } else if (command == "wa" || command == "wall") fileSaveAll();
+        else if (command == "q" || command == "quit" || command == "bd" || command == "bdelete") fileClose();
+        else if (command == "q!" || command == "quit!") { edit->document->setClean(); fileClose(); }
+        else if (command == "qa" || command == "qall") fileExit();
+        else if (command == "e" || command == "edit") {
+            if (argument.isEmpty()) fileOpen();
+            else load(QFileInfo(argument).isAbsolute() ? argument : QFileInfo(edit->editor->fileName()).absoluteDir().absoluteFilePath(argument));
+        } else if (command == "tabnew" || command == "enew") {
+            if (argument.isEmpty()) fileNew(); else load(QFileInfo(argument).isAbsolute() ? argument : QFileInfo(edit->editor->fileName()).absoluteDir().absoluteFilePath(argument));
+        } else if (command == "bn" || command == "bnext" || command == "tabn" || command == "tabnext") gotoNextDocument();
+        else if (command == "bp" || command == "bprevious" || command == "tabp" || command == "tabprevious") gotoPrevDocument();
+    });
     connect(edit->editor, SIGNAL(cursorHovered()), this, SLOT(cursorHovered()));
     connect(edit->editor, SIGNAL(emitWordDoubleClicked()), this, SLOT(cursorHovered()));
     connect(edit, SIGNAL(showMarkTooltipForLogMessage(QList<int>)), this, SLOT(showMarkTooltipForLogMessage(QList<int>)));

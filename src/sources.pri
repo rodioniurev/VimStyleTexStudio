@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
+    $$PWD/viminputbinding.h \
     $$PWD/aboutdialog.h \
     $$PWD/aichatassistant.h \
     $$PWD/aiquerystoragemodel.h \
@@ -113,6 +114,8 @@ HEADERS += \
     $$PWD/terminal_config.h
 
 SOURCES += \
+    $$PWD/viminputbinding.cpp \
+    $$PWD/vimcommands.cpp \
     $$PWD/aboutdialog.cpp \
     $$PWD/additionaltranslations.cpp \
     $$PWD/aichatassistant.cpp \

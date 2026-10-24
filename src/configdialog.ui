@@ -2158,6 +2158,16 @@ Then you can select a new shortcut by one of the following ways:
                    </widget>
                   </item>
                   <item row="2" column="1">
+                   <widget class="QCheckBox" name="checkBoxVimMode">
+                    <property name="text">
+                     <string>Enable Vim editing</string>
+                    </property>
+                    <property name="toolTip">
+                     <string>Start in Normal mode. Use i to insert text and Esc to return to Normal mode.</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
                    <widget class="QCheckBox" name="checkBoxBoldCursor">
                     <property name="toolTip">
                      <string>Draw cursor as a thick line</string>

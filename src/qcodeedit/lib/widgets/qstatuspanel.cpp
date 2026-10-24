@@ -173,6 +173,8 @@ bool QStatusPanel::paint(QPainter *p, QEditor *e)
 	xpos += 20;
 
 	s = editor()->flag(QEditor::Overwrite) ? tr("OVERWRITE") : tr("INSERT");
+    const QString vimMode = e->property("vimMode").toString();
+    if (!vimMode.isEmpty()) s = vimMode;
 	p->drawText(xpos, ascent, s);
 	xpos += UtilsUi::getFmWidth(fm, s) + 10;
 

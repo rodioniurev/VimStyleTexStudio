@@ -20,6 +20,7 @@ public:
 	int showlinemultiples;
 	int cursorSurroundLines;
 	bool boldCursor;
+    bool vimMode = false;
 	bool centerDocumentInEditor;
     bool showIndentGuides;
 	bool folding, showlinestate, showcursorstate, realtimeChecking;
