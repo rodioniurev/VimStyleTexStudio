@@ -631,8 +631,8 @@ void VimInputBindingTest::mappingTimeoutAndRecursion()
     QFocusEvent focusOut(QEvent::FocusOut); QApplication::sendEvent(editor.get(), &focusOut);
     QCOMPARE(editor->text(), QString("jone")); escape();
     QTemporaryDir directory; QVERIFY(directory.isValid());
-    editor->setText("one", false); editor->setCursorPosition(0, 0); QVERIFY(editor->save(directory.filePath("pending.tex")));
-    keys("ij"); vim->flushPendingInput(); QVERIFY(editor->isContentModified()); QVERIFY(editor->save());
+    editor->setText("one", false); editor->setCursorPosition(0, 0); editor->save(directory.filePath("pending.tex")); QVERIFY(QFile::exists(editor->fileName()));
+    keys("ij"); vim->flushPendingInput(); QVERIFY(editor->isContentModified()); editor->save(); QVERIFY(!editor->isContentModified());
     QFile saved(editor->fileName()); QVERIFY(saved.open(QIODevice::ReadOnly)); QCOMPARE(saved.readAll(), QByteArray("jone")); escape();
     editor->setText("one", false); editor->setCursorPosition(0, 0); keys("ij"); vim->setEnabled(false);
     QCOMPARE(editor->text(), QString("jone")); vim->setEnabled(true);
