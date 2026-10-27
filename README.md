@@ -63,6 +63,11 @@ with LF and CRLF. Coverage includes text results, mode transitions, registers,
 counts, Visual selections, undo, replay, read-only buffers and errors.
 This validates that matrix, not complete Vim compatibility.
 
+Preview 2 fixes saving before Build & View during Insert/Replace. It also adds
+regressions for dirty-state tracking and undo boundaries when saving mid-input;
+a real pdflatex/PDF-text check confirmed that the updated text reaches the PDF
+without pressing Escape first. See the changelog and release validation report.
+
 See [verification details](docs/vimstyle/VERIFICATION.md) and
 [`scripts/vimstyle`](scripts/vimstyle).
 

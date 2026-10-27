@@ -9,6 +9,7 @@ import sys
 import pefile
 
 sdk, source, build, dist = map(lambda p: Path(p).resolve(), sys.argv[1:5])
+release = sys.argv[5] if len(sys.argv) > 5 else '0.1.0-preview.2'
 dist.mkdir(parents=True, exist_ok=True)
 shutil.copy2(build / 'texstudio.exe', dist)
 env = dict(os.environ, PATH=str(sdk / 'bin') + os.pathsep + os.environ['PATH'])
@@ -72,9 +73,9 @@ for name in ['README.md', 'CHANGELOG.md', 'UPSTREAM_README.md']:
     shutil.copy2(source / name, dist)
 shutil.copytree(source / 'docs/vimstyle', dist / 'docs', dirs_exist_ok=True)
 (dist / 'SOURCE_CODE.txt').write_text(
-    'VimStyleTexStudio 0.1.0-preview.1 (unofficial TeXstudio build)\n'
+    f'VimStyleTexStudio {release} (unofficial TeXstudio build)\n'
     'Matching application source and dependency sources:\n'
-    'https://github.com/rodioniurev/VimStyleTexStudio/releases/tag/v0.1.0-preview.1\n'
+    f'https://github.com/rodioniurev/VimStyleTexStudio/releases/tag/v{release}\n'
     'Build and packaging instructions are included in the source archive.\n'
     'See COPYING and licenses/ for license notices.\n', encoding='utf-8')
 (dist / 'config').mkdir(exist_ok=True)

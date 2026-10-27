@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-preview.2 — 2026-10-27
+
+- Fix automatic saving before Build & View while Vim Insert or Replace is active.
+  Pending edit groups previously left the document marked as unmodified, so a
+  successful compilation could use the old source from disk.
+- Track unsaved edits inside open document change blocks immediately, including
+  the Save action and close prompts. A save commits an undo boundary while
+  preserving open edit groups, so typing can continue without pressing Escape.
+- Keep empty edit groups from marking a saved document dirty.
+- Add regressions for i/a/R/ciw, saving during input, continued typing, nested
+  groups, clean-state notifications and undo/redo across a save boundary.
+- Verify a real pdflatex build and PDF text change without leaving Insert mode.
+
+The runtime dependency versions are unchanged from Preview 1.
+
 ## 0.1.0-preview.1 — 2026-10-24
 
 First unofficial preview, based on TeXstudio development version 4.9.10,

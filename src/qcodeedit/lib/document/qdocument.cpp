@@ -1872,7 +1872,13 @@ void QDocument::clearLanguageMatches()
 */
 bool QDocument::isClean() const
 {
-	return m_impl ? m_impl->m_commands.isClean() : true;
+	if (!m_impl) return true;
+	if (!m_impl->m_commands.isClean()) return false;
+	// Open change blocks have already edited the buffer, even though they
+	// have not yet been pushed onto the undo stack (e.g. Vim Insert mode).
+	for (const QDocumentCommandBlock *block : m_impl->m_macros)
+		if (!block->isEmpty()) return false;
+	return true;
 }
 
 void QDocument::expand(int line){
@@ -2030,7 +2036,12 @@ void QDocument::setClean()
 {
 	if ( m_impl )
 	{
+		// A save is an undo boundary. Commit pending edits before recording
+		// the saved index, then preserve the caller's open-block nesting.
+		const int depth = m_impl->m_macros.size();
+		while (!m_impl->m_macros.isEmpty()) m_impl->endChangeBlock();
 		m_impl->m_commands.setClean();
+		for (int i = 0; i < depth; ++i) m_impl->beginChangeBlock();
 		//m_impl->m_status.clear();
 
 		QHash<QDocumentLineHandle*, QPair<int, int> >::iterator it = m_impl->m_status.begin();
@@ -6693,8 +6704,10 @@ void QDocumentPrivate::execute(QDocumentCommand *cmd)
 
 	if ( m_macros.count() )
 	{
-		cmd->redo();
+		const bool wasClean = m_doc->isClean();
 		m_macros.top()->addCommand(cmd);
+		cmd->redo();
+		if (wasClean) emit m_doc->cleanChanged(false);
 	} else {
 	m_commands.push(cmd);
 }
@@ -8045,6 +8058,7 @@ void QDocumentPrivate::endChangeBlock()
 		return;
 
 	QDocumentCommandBlock *b = m_macros.pop();
+	if (b->isEmpty()) { delete b; return; }
 	b->setWeakLock(true);
 
 	execute(b);

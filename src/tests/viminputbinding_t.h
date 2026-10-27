@@ -52,6 +52,9 @@ private slots:
     void extendedReadOnly();
     void applicationCommands();
     void insertControlsAndUndo();
+    void saveDuringInsert_data();
+    void saveDuringInsert();
+    void changeBlockSaveBoundaries();
 private:
     void keys(const char *text);
     void ex(const QString &text);

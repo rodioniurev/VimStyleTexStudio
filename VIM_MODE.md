@@ -5,7 +5,9 @@ The saved setting is `Editor/VimMode`; it applies to existing and new tabs.
 The provided Windows package enables it in its own profile.
 
 Normal mode interprets commands. `i` starts Insert; `Esc` or `Ctrl+[` returns to
-Normal. Use the English keyboard layout for commands; text input can use any
+Normal. Saving and Build & View work while Insert/Replace is active; Escape is
+not required first. Saving creates an undo boundary and typing can continue.
+Use the English keyboard layout for commands; text input can use any
 layout. The editor status panel shows the mode. `:`, `/` and `?` open a command
 line at the bottom of the editor, even if the status panel is hidden. Enter
 executes, Esc cancels; arrows, Home/End, Backspace/Delete and Ctrl+U edit the

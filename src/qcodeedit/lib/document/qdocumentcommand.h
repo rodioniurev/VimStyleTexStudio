@@ -159,6 +159,7 @@ public:
 
 	void setWeakLock(bool l);
 	bool isWeakLocked() const;
+	bool isEmpty() const { return m_commands.isEmpty(); }
 
 	virtual void addCommand(QDocumentCommand *c);
 	virtual void removeCommand(QDocumentCommand *c);

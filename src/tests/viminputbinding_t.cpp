@@ -18,6 +18,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QTemporaryDir>
 
 VimInputBindingTest::VimInputBindingTest() = default;
 VimInputBindingTest::~VimInputBindingTest() = default;
@@ -472,5 +473,58 @@ void VimInputBindingTest::insertControlsAndUndo()
     editor->setCursorPosition(0, 0);
     keys("ihello"); escape(); keys("\".p");
     QCOMPARE(editor->document()->line(0).text(), QString("hellohelloone two three"));
+}
+void VimInputBindingTest::changeBlockSaveBoundaries()
+{
+    editor->setText("old", false);
+    QDocument *doc = editor->document(); doc->setClean();
+    doc->beginMacro(); doc->endMacro();
+    QVERIFY(doc->isClean()); QVERIFY(!doc->canUndo());
+    QSignalSpy changed(doc, SIGNAL(cleanChanged(bool)));
+    doc->beginMacro(); doc->beginMacro();
+    QDocumentCursor cursor(doc, 0, 0); cursor.insertText("X");
+    QVERIFY(!doc->isClean()); QVERIFY(!changed.isEmpty());
+    QCOMPARE(changed.last().at(0).toBool(), false);
+    doc->setClean(); QVERIFY(doc->isClean());
+    cursor.insertText("Y"); QVERIFY(!doc->isClean());
+    doc->endMacro(); doc->endMacro();
+    QCOMPARE(editor->text(), QString("XYold"));
+    editor->undo(); QCOMPARE(editor->text(), QString("Xold")); QVERIFY(doc->isClean());
+    editor->redo(); QCOMPARE(editor->text(), QString("XYold")); QVERIFY(!doc->isClean());
+    editor->undo(); editor->undo(); QCOMPARE(editor->text(), QString("old"));
+    QVERIFY(!doc->isClean());
+    doc->setClean(); doc->beginMacro(); doc->setClean(); doc->endMacro();
+    QVERIFY(doc->isClean());
+}
+
+void VimInputBindingTest::saveDuringInsert_data()
+{
+    QTest::addColumn<QString>("command"); QTest::addColumn<QString>("expected");
+    QTest::newRow("insert") << "iNEW" << "NEWold value";
+    QTest::newRow("append") << "aNEW" << "oNEWld value";
+    QTest::newRow("replace") << "RNEW" << "NEW value";
+    QTest::newRow("change-word") << "ciwNEW" << "NEW value";
+}
+
+void VimInputBindingTest::saveDuringInsert()
+{
+    QFETCH(QString, command); QFETCH(QString, expected);
+    QTemporaryDir directory; QVERIFY(directory.isValid());
+    const QString path = directory.filePath("compile-input.tex");
+    editor->setText("old value", false); editor->setCursorPosition(0, 0);
+    editor->save(path); QVERIFY(!editor->isContentModified());
+    QTest::keyClicks(editor.get(), command);
+    QCOMPARE(editor->text(), expected);
+    // Match TeXstudio::fileSaveAll's gate, including F5 while still in Insert.
+    QVERIFY(editor->isContentModified());
+    if (editor->isContentModified()) editor->save();
+    QFile saved(path); QVERIFY(saved.open(QIODevice::ReadOnly));
+    QCOMPARE(QString::fromUtf8(saved.readAll()), expected); saved.close();
+    QVERIFY(!editor->isContentModified());
+    keys("MORE"); QVERIFY(editor->isContentModified());
+    escape(); keys("u");
+    QCOMPARE(editor->text(), expected);
+    QVERIFY(!editor->isContentModified());
+    keys("u"); QCOMPARE(editor->text(), QString("old value"));
 }
 #endif
