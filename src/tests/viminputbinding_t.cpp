@@ -11,6 +11,7 @@
 #include <QtTest/QtTest>
 #include <QClipboard>
 #include <QInputMethodEvent>
+#include <QFocusEvent>
 #include <QMimeData>
 #include <QLineEdit>
 #include <QtTest/QSignalSpy>
@@ -25,11 +26,18 @@ VimInputBindingTest::~VimInputBindingTest() = default;
 
 void VimInputBindingTest::initTestCase()
 {
+    definitionsFile = qApp->property("vimDefinitionsFile");
+    qApp->setProperty("vimDefinitionsFile", QString());
     clipboard.reset(new QMimeData);
     const QMimeData *original = QApplication::clipboard()->mimeData();
     if (original) for (const QString &format : original->formats()) clipboard->setData(format, original->data(format));
 }
-void VimInputBindingTest::cleanupTestCase() { QApplication::clipboard()->setMimeData(clipboard.release()); }
+void VimInputBindingTest::cleanupTestCase()
+{
+    QApplication::clipboard()->setMimeData(clipboard.release());
+    qApp->setProperty("vimDefinitionsFile", definitionsFile);
+    QEditor unused; VimInputBinding restore(&unused);
+}
 
 void VimInputBindingTest::init()
 {
@@ -43,6 +51,7 @@ void VimInputBindingTest::init()
     vim = new VimInputBinding(editor.get());
     editor->setInputBinding(vim);
     vim->setEnabled(true);
+    ex("abclear"); ex("mapclear"); ex("mapclear!");
 }
 
 void VimInputBindingTest::cleanup() { editor.reset(); QDocument::setTabStop(tabStop); }
@@ -301,9 +310,9 @@ void VimInputBindingTest::exCommands_data()
     QTest::newRow("substitute-ignorecase") << "ONE one" << "%s/one/X/gi" << "X X";
     QTest::newRow("range-delete") << "a\nb\nc\nd" << "2,3d" << "a\nd";
     QTest::newRow("last-line-delete") << "a\nb\nc" << "$d" << "a\nb";
-    QTest::newRow("sort") << "c\na\nb" << "sort" << "a\nb\nc";
-    QTest::newRow("sort-reverse") << "a\nb\nc" << "sort!" << "c\nb\na";
-    QTest::newRow("sort-unique") << "c\na\na" << "sort u" << "a\nc";
+    QTest::newRow("sort") << "c\na\nb" << "%sort" << "a\nb\nc";
+    QTest::newRow("sort-reverse") << "a\nb\nc" << "%sort!" << "c\nb\na";
+    QTest::newRow("sort-unique") << "c\na\na" << "%sort u" << "a\nc";
     QTest::newRow("join") << "one\n  two\nthree" << "1,3join" << "one two three";
     QTest::newRow("unknown-command") << "one" << "notacommand" << "one";
     QTest::newRow("invalid-regex") << "one" << "%s/[/X/g" << "one";
@@ -527,4 +536,211 @@ void VimInputBindingTest::saveDuringInsert()
     QVERIFY(!editor->isContentModified());
     keys("u"); QCOMPARE(editor->text(), QString("old value"));
 }
+
+void VimInputBindingTest::abbreviations_data()
+{
+    QTest::addColumn<QString>("definition"); QTest::addColumn<QString>("input"); QTest::addColumn<QString>("expected");
+    QTest::newRow("short-ab") << "ab teh the" << "teh " << "the ";
+    QTest::newRow("long-ab") << "abbreviate teh the" << "teh." << "the.";
+    QTest::newRow("insert-only") << "iabbrev teh the" << "teh," << "the,";
+    QTest::newRow("noremap") << "inoreabbrev teh the" << "teh " << "the ";
+    QTest::newRow("word-suffix") << "iabbrev teh the" << "ateh " << "ateh ";
+    QTest::newRow("word-prefix") << "iabbrev teh the" << "tehx " << "tehx ";
+    QTest::newRow("punctuation-before") << "iabbrev teh the" << "(teh)" << "(the)";
+    QTest::newRow("end-id") << "iabbrev #i INCLUDE" << "#i " << "INCLUDE ";
+    QTest::newRow("end-id-boundary") << "iabbrev #i INCLUDE" << ">#i " << ">#i ";
+    QTest::newRow("non-id") << "iabbrev ;; END" << ";; " << "END ";
+    QTest::newRow("non-id-boundary") << "iabbrev ;; END" << "x;; " << "x;; ";
+    QTest::newRow("rhs-spaces") << "iabbrev btw by the way" << "btw " << "by the way ";
+    QTest::newRow("latex") << "iabbrev qq \\qquad" << "qq " << "\\qquad ";
+    QTest::newRow("non-recursive") << "iabbrev foo foo!" << "foo " << "foo! ";
+    QTest::newRow("key-notation") << "iabbrev foo one<CR>two" << "foo " << "one\ntwo ";
+}
+void VimInputBindingTest::abbreviations()
+{
+    QFETCH(QString, definition); QFETCH(QString, input); QFETCH(QString, expected);
+    ex(definition); editor->setText("", false); editor->setCursorPosition(0, 0);
+    keys("i"); QTest::keyClicks(editor.get(), input); escape();
+    QCOMPARE(editor->text(), expected);
+    keys("u"); QCOMPARE(editor->text(), QString());
+}
+void VimInputBindingTest::abbreviationModesAndRemoval()
+{
+    ex("iabbrev teh the"); editor->setText("", false); keys("iteh");
+    escape(); QCOMPARE(editor->text(), QString("the"));
+    editor->setText("", false); keys("iteh"); QTest::keyClick(editor.get(), Qt::Key_C, Qt::ControlModifier);
+    QCOMPARE(editor->text(), QString("teh"));
+    editor->setText("", false); keys("iteh"); QTest::keyClick(editor.get(), Qt::Key_BracketRight, Qt::ControlModifier);
+    QCOMPARE(editor->text(), QString("the")); escape();
+    editor->setText("", false); keys("iteh"); QTest::keyClick(editor.get(), Qt::Key_V, Qt::ControlModifier); keys(" ");
+    QTest::keyClick(editor.get(), Qt::Key_C, Qt::ControlModifier); QCOMPARE(editor->text(), QString("teh "));
+    ex("iunabbrev teh"); editor->setText("", false); keys("iteh "); escape(); QCOMPARE(editor->text(), QString("teh "));
+    ex("cabbrev SS set"); ex("SS ts=6"); QCOMPARE(QDocument::tabStop(), 6);
+    ex("cunabbrev SS"); ex("SS ts=7"); QCOMPARE(QDocument::tabStop(), 6);
+    ex("iabbrev <buffer> zz LOCAL"); ex("iabbrev zz GLOBAL");
+    editor->setText("", false); keys("izz "); escape(); QCOMPARE(editor->text(), QString("LOCAL "));
+    QEditor other; other.document()->setFormatScheme(new QFormatScheme(other.document())); other.setText("", false);
+    VimInputBinding binding(&other); other.setInputBinding(&binding); binding.setEnabled(true);
+    QTest::keyClicks(&other, "izz "); QTest::keyClick(&other, Qt::Key_Escape); QCOMPARE(other.text(), QString("GLOBAL "));
+    ex("iabclear <buffer>"); editor->setText("", false); keys("izz "); escape(); QCOMPARE(editor->text(), QString("GLOBAL "));
+    ex("iabbrev <expr> bad 1+1"); QVERIFY(editor->property("vimMessage").toString().contains("Unsupported"));
+    ex("iabbrev a.b INVALID"); QVERIFY(editor->property("vimMessage").toString().contains("Invalid"));
+}
+void VimInputBindingTest::mappings()
+{
+    ex("nnoremap Q dw"); keys("Q"); QCOMPARE(editor->document()->line(0).text(), QString("two three"));
+    ex("nnoremap X Q"); keys("X"); QCOMPARE(editor->document()->line(0).text(), QString("two three"));
+    ex("nmap X Q"); keys("X"); QCOMPARE(editor->document()->line(0).text(), QString("three"));
+    ex("nunmap Q"); keys("Q"); QCOMPARE(editor->document()->line(0).text(), QString("three"));
+    ex("inoremap jj <Esc>"); keys("Ajj"); QCOMPARE(editor->property("vimMode").toString(), QString("VIM NORMAL"));
+    ex("inoremap <C-l> HELLO"); keys("i"); QTest::keyClick(editor.get(), Qt::Key_L, Qt::ControlModifier); escape();
+    QVERIFY(editor->text().contains("HELLO"));
+    ex("nnoremap <F6> iFKEY<Esc>"); QTest::keyClick(editor.get(), Qt::Key_F6); QVERIFY(editor->text().contains("FKEY"));
+    ex("nnoremap <Leader>x iLEADER<Esc>"); keys("\\x"); QVERIFY(editor->text().contains("LEADER"));
+    ex("nnoremap Q iMAPPED<Esc>");
+    ex("normal! Q"); const QString before = editor->text(); ex("normal Q"); QVERIFY(editor->text() != before);
+    ex("nnoremap <buffer> Q iLOCAL<Esc>"); keys("Q"); QVERIFY(editor->text().contains("LOCAL"));
+    ex("nnoremap Z <Nop>"); const QString unchanged = editor->text(); keys("Z"); QCOMPARE(editor->text(), unchanged);
+}
+void VimInputBindingTest::mappingModesAndRepeat()
+{
+    ex("onoremap Q iw"); keys("dQ"); QCOMPARE(editor->document()->line(0).text(), QString(" two three"));
+    ex("xnoremap Q d"); keys("lvwQ"); QCOMPARE(editor->document()->line(0).text(), QString(" hree"));
+    ex("cnoremap ZZ set"); ex("ZZ ts=7"); QCOMPARE(QDocument::tabStop(), 7);
+    ex("cmapclear"); ex("nnoremap Q x"); editor->setText("abcdef", false); editor->setCursorPosition(0, 0);
+    keys("2Q"); QCOMPARE(editor->text(), QString("cdef"));
+    keys("."); QCOMPARE(editor->text(), QString("ef"));
+    ex("iabbrev xx EXPANDED"); editor->setText("", false); editor->setCursorPosition(0, 0);
+    keys("qai xx "); escape(); keys("q@a"); QCOMPARE(editor->text().count("EXPANDED"), 2);
+    editor->setText("", false); editor->setCursorPosition(0, 0); keys("3ixx "); escape();
+    QCOMPARE(editor->text(), QString("EXPANDED EXPANDED EXPANDED "));
+    ex("nnoremap Q x"); ex("nnoremap QQ dd"); editor->setText("abcdef", false); editor->setCursorPosition(0, 0);
+    keys("Qx"); QCOMPARE(editor->text(), QString("cdef"));
+}
+
+void VimInputBindingTest::mappingTimeoutAndRecursion()
+{
+    ex("inoremap jj <Esc>"); keys("ij");
+    QCOMPARE(editor->document()->line(0).text(), QString("one two three"));
+    QTest::qWait(1150); QCOMPARE(editor->document()->line(0).text(), QString("jone two three"));
+    keys("jx"); QCOMPARE(editor->document()->line(0).text(), QString("jjxone two three")); escape();
+    ex("nmap Q Q"); keys("Q"); QVERIFY(editor->property("vimMessage").toString().contains("recursion"));
+    ex("nunmap Q"); ex("nnoremap Q x"); ex("nnoremap QQ dd"); keys("Q"); QTest::qWait(1150);
+    QCOMPARE(editor->document()->line(0).text(), QString("jjone two three"));
+    editor->setText("one", false); editor->setCursorPosition(0, 0); keys("ij");
+    QFocusEvent focusOut(QEvent::FocusOut); QApplication::sendEvent(editor.get(), &focusOut);
+    QCOMPARE(editor->text(), QString("jone")); escape();
+    QTemporaryDir directory; QVERIFY(directory.isValid());
+    editor->setText("one", false); editor->setCursorPosition(0, 0); QVERIFY(editor->save(directory.filePath("pending.tex")));
+    keys("ij"); vim->flushPendingInput(); QVERIFY(editor->isContentModified()); QVERIFY(editor->save());
+    QFile saved(editor->fileName()); QVERIFY(saved.open(QIODevice::ReadOnly)); QCOMPARE(saved.readAll(), QByteArray("jone")); escape();
+    editor->setText("one", false); editor->setCursorPosition(0, 0); keys("ij"); vim->setEnabled(false);
+    QCOMPARE(editor->text(), QString("jone")); vim->setEnabled(true);
+
+}
+void VimInputBindingTest::definitionsPersistence()
+{
+    QTemporaryDir directory; QVERIFY(directory.isValid());
+    const QVariant previous = qApp->property("vimDefinitionsFile");
+    const QString filename = directory.filePath("vim-definitions.json");
+    qApp->setProperty("vimDefinitionsFile", filename);
+    {
+        QEditor other; other.document()->setFormatScheme(new QFormatScheme(other.document()));
+        VimInputBinding binding(&other); other.setInputBinding(&binding); binding.setEnabled(true);
+        QTest::keyClicks(&other, ":iabbrev abc SAVED"); QTest::keyClick(&other, Qt::Key_Return);
+        QTest::keyClicks(&other, ":nnoremap Q iMAP<Esc>"); QTest::keyClick(&other, Qt::Key_Return);
+        QVERIFY(QFile::exists(filename));
+    }
+    // Force a reload from disk by switching to an empty storage first.
+    qApp->setProperty("vimDefinitionsFile", QString()); { QEditor empty; VimInputBinding binding(&empty); }
+    qApp->setProperty("vimDefinitionsFile", filename);
+    {
+        QEditor other; other.document()->setFormatScheme(new QFormatScheme(other.document())); other.setText("", false);
+        VimInputBinding binding(&other); other.setInputBinding(&binding); binding.setEnabled(true);
+        QTest::keyClicks(&other, "iabc "); QTest::keyClick(&other, Qt::Key_Escape); QCOMPARE(other.text(), QString("SAVED "));
+        QTest::keyClicks(&other, "Q"); QVERIFY(other.text().contains("MAP"));
+    }
+    qApp->setProperty("vimDefinitionsFile", previous);
+}
+void VimInputBindingTest::insertExtensions()
+{
+    keys("i"); QTest::keyClick(editor.get(), Qt::Key_O, Qt::ControlModifier); keys("dw");
+    QCOMPARE(editor->property("vimMode").toString(), QString("VIM INSERT")); keys("NEW"); escape();
+    QCOMPARE(editor->document()->line(0).text(), QString("NEWtwo three"));
+    keys("i"); QTest::keyClick(editor.get(), Qt::Key_O, Qt::ControlModifier); keys("ciwREPLACED"); escape();
+    QCOMPARE(editor->property("vimMode").toString(), QString("VIM NORMAL"));
+    editor->setText("NEWtwo three\nfour five", false); editor->setCursorPosition(0, 0);
+    ex("set sw=2"); keys("i"); QTest::keyClick(editor.get(), Qt::Key_T, Qt::ControlModifier);
+    QVERIFY(editor->text().startsWith("  ")); QTest::keyClick(editor.get(), Qt::Key_D, Qt::ControlModifier);
+    QVERIFY(editor->text().startsWith("NEW")); escape();
+    editor->setCursorPosition(0, 0); keys("i"); QTest::keyClick(editor.get(), Qt::Key_E, Qt::ControlModifier); escape();
+    QVERIFY(editor->text().startsWith("fNEW"));
+}
+void VimInputBindingTest::extraMotionsAndEx()
+{
+    editor->setText("foo.bar baz   \nsecond\nthird", false); editor->setCursorPosition(0, 8);
+    keys("ge"); QCOMPARE(editor->cursor().columnNumber(), 6);
+    keys("ge"); QCOMPARE(editor->cursor().columnNumber(), 3);
+    editor->setCursorPosition(0, 8); keys("gE"); QCOMPARE(editor->cursor().columnNumber(), 6);
+    keys("g_"); QCOMPARE(editor->cursor().columnNumber(), 10);
+    keys("5go"); QCOMPARE(editor->cursor().columnNumber(), 4);
+    keys("gj"); QCOMPARE(editor->cursor().lineNumber(), 1);
+    keys("gk"); QCOMPARE(editor->cursor().lineNumber(), 0);
+    editor->setText("b\na\nc", false); editor->setCursorPosition(0, 0); ex("sort"); QCOMPARE(editor->text(), QString("b\na\nc"));
+    ex("%sort"); QCOMPARE(editor->text(), QString("a\nb\nc"));
+    ex("s/a/X/"); keys("j"); ex("&"); QCOMPARE(editor->text(), QString("X\nb\nc"));
+    QTemporaryDir directory; QFile file(directory.filePath("commands.vim")); QVERIFY(file.open(QIODevice::WriteOnly));
+    file.write("\" supported commands only\niabbrev src SOURCE\nnnoremap Q iYES<Esc>\n"); file.close();
+    ex("source " + file.fileName()); keys("Q"); QVERIFY(editor->text().contains("YES"));
+    ex("mapclear");
+    editor->setText("one\ntwo\nthree\nfour", false); editor->setCursorPosition(0, 0);
+    ex("1,2copy $"); QCOMPARE(editor->text(), QString("one\ntwo\nthree\nfour\none\ntwo"));
+    keys("u"); QCOMPARE(editor->text(), QString("one\ntwo\nthree\nfour"));
+    ex("1,2move $"); QCOMPARE(editor->text(), QString("three\nfour\none\ntwo"));
+    keys("u"); keys("yy"); ex("put"); QCOMPARE(editor->text(), QString("one\none\ntwo\nthree\nfour"));
+    keys("u"); editor->setCursorPosition(0, 0); keys("ma"); ex("'a+1,$-1d"); QCOMPARE(editor->text(), QString("one\nfour"));
+    keys("u"); editor->setCursorPosition(0, 0); ex("/two/;+1d"); QCOMPARE(editor->text(), QString("one\nfour"));
+    keys("u"); editor->setCursorPosition(0, 0); ex("2;+1d"); QCOMPARE(editor->text(), QString("one\nfour"));
+    editor->setText("original", false); editor->setCursorPosition(0, 0); keys("3oX"); escape();
+    QCOMPARE(editor->text(), QString("original\nX\nX\nX")); keys("u"); QCOMPARE(editor->text(), QString("original"));
+    keys("3OX"); escape(); QCOMPARE(editor->text(), QString("X\nX\nX\noriginal"));
+    editor->setText("abc", false); editor->setCursorPosition(0, 0); keys("iHELLO"); escape(); keys("$gi!"); escape();
+    QCOMPARE(editor->text(), QString("HELLO!abc"));
+
+}
+
+
+void VimInputBindingTest::extensionOracle_data()
+{
+    QTest::addColumn<QString>("text"); QTest::addColumn<int>("position"); QTest::addColumn<QStringList>("definitions");
+    QTest::addColumn<QString>("input"); QTest::addColumn<QString>("expected"); QTest::addColumn<int>("row"); QTest::addColumn<int>("column");
+    QFile file(QFINDTESTDATA("vim_extension_oracle.json")); QVERIFY(file.open(QIODevice::ReadOnly));
+    const QJsonDocument reference = QJsonDocument::fromJson(file.readAll());
+    QFile nvim(QFINDTESTDATA("nvim_extension_oracle.json")); QVERIFY(nvim.open(QIODevice::ReadOnly));
+    QCOMPARE(reference, QJsonDocument::fromJson(nvim.readAll()));
+    for (const QJsonValue &value : reference.array()) {
+        const QJsonObject item = value.toObject(); QStringList definitions;
+        for (const auto &definition : item["definitions"].toArray()) definitions.append(definition.toString());
+        QTest::newRow(item["name"].toString().toUtf8().constData()) << item["text"].toString() << item["pos"].toInt() << definitions
+            << item["keys"].toString() << item["expected"].toString() << item["line"].toInt() << item["column"].toInt();
+    }
+}
+void VimInputBindingTest::extensionOracle()
+{
+    QFETCH(QString, text); QFETCH(int, position); QFETCH(QStringList, definitions); QFETCH(QString, input);
+    QFETCH(QString, expected); QFETCH(int, row); QFETCH(int, column);
+    for (const QString &definition : definitions) ex(definition);
+    editor->setText(text, false); editor->setCursorPosition(0, position);
+    for (QChar ch : input) {
+        if (ch.unicode() == 27) escape();
+        else if (ch.unicode() == 29) QTest::keyClick(editor.get(), Qt::Key_BracketRight, Qt::ControlModifier);
+        else if (ch.unicode() == 3) QTest::keyClick(editor.get(), Qt::Key_C, Qt::ControlModifier);
+        else if (ch == '\r') QTest::keyClick(editor.get(), Qt::Key_Return);
+        else QTest::keyClicks(editor.get(), QString(ch));
+    }
+    QCOMPARE(editor->document()->textLines().join('\n'), expected);
+    QCOMPARE(editor->cursor().lineNumber(), row);
+    QCOMPARE(editor->cursor().columnNumber(), column);
+}
+
 #endif

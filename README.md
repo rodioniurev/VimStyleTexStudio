@@ -10,6 +10,10 @@ This is an unofficial fork. The first release is a preview.
 · [Command reference](VIM_MODE.md) · [Build instructions](docs/vimstyle/BUILDING.md)
 · [Changelog](CHANGELOG.md)
 
+The 0.2 preview adds persistent abbreviations (`:ab`, `:iabbrev`, `:cabbrev`),
+mode-specific mappings, manual `:source`, additional Insert commands and wrapped
+line motions. See [VIM_MODE.md](VIM_MODE.md) for examples and explicit limits.
+
 ## Start on Windows
 
 1. Download the `windows-x64.zip` asset from Releases and extract the entire ZIP

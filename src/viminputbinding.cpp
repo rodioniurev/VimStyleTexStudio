@@ -14,6 +14,8 @@
 #include <QInputMethodEvent>
 #include <QScrollBar>
 #include <QRegularExpression>
+#include <QTimer>
+#include <QScopeGuard>
 
 namespace {
 constexpr int maxCount = 10000;
@@ -34,6 +36,11 @@ void clampNormal(QDocumentCursor &cursor)
 VimInputBinding::VimInputBinding(QEditor *editor) : QObject(editor), m_editor(editor)
 {
     editor->installEventFilter(this);
+    loadDefinitions();
+    m_mappingTimer = new QTimer(this);
+    m_mappingTimer->setSingleShot(true);
+    m_mappingTimer->setInterval(1000);
+    connect(m_mappingTimer, &QTimer::timeout, this, &VimInputBinding::flushMapping);
     m_commandLine = new QLineEdit(editor->viewport());
     m_commandLine->setObjectName("vimCommandLine");
     m_commandLine->setFocusPolicy(Qt::NoFocus);
@@ -56,6 +63,7 @@ void VimInputBinding::resetCommand()
 void VimInputBinding::setEnabled(bool enabled)
 {
     if (m_enabled == enabled) return;
+    if (!enabled) { flushPendingInput(); m_mappingTimer->stop(); }
     m_enabled = enabled;
     resetCommand();
     if (enabled) {
@@ -80,6 +88,7 @@ void VimInputBinding::setEnabled(bool enabled)
 
 void VimInputBinding::setMode(Mode mode)
 {
+    if (mode == Insert || mode == Replace) m_insertOnce = false;
     if (visual() && mode != m_mode) {
         m_lastVisualAnchor = m_visualAnchor;
         m_lastVisualCursor = m_visualCursor;
@@ -90,7 +99,7 @@ void VimInputBinding::setMode(Mode mode)
         beginInsert();
         m_insertBase = bufferText();
         m_insertSequence.clear();
-        m_insertRepeat = 1;
+        m_insertRepeat = 1; m_openRepeat = false; m_abbreviationFresh = true;
     }
     else if (mode != Insert && mode != Replace) endInsert();
     m_mode = mode;
@@ -109,10 +118,30 @@ bool VimInputBinding::eventFilter(QObject *object, QEvent *event)
         if (event->type() == QEvent::KeyPress) {
             auto *key = static_cast<QKeyEvent *>(event);
             if (m_mode != Command) m_commandLine->hide();
+            if (inserting()) {
+                if (m_abbreviationFresh) { m_abbreviationFloor = offset(m_editor->cursor()); m_abbreviationFresh = false; }
+                m_abbreviationFloor = qMin(m_abbreviationFloor, offset(m_editor->cursor()));
+            }
+            if (mappingKey(key)) return true;
             recordKey(key);
+            if (expandAbbreviation(key)) return true;
+            if (m_expandingAbbreviation && inserting() && m_await.isNull() && !key->text().isEmpty()
+                && !(key->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier))
+                && key->key() != Qt::Key_Return && key->key() != Qt::Key_Enter && key->key() != Qt::Key_Tab) {
+                if (!m_editor->isReadOnly()) m_editor->write(key->text());
+                return true;
+            }
+            if (m_literalNext && (inserting() || m_mode == Command)) {
+                m_literalNext = false;
+                if (m_mode == Command) {
+                    m_commandText.insert(m_commandPosition, key->text()); m_commandPosition += key->text().size();
+                    message(QString(m_prompt) + m_commandText);
+                } else if (!m_editor->isReadOnly()) m_editor->write(key->text());
+                return true;
+            }
             if (key->key() == Qt::Key_Escape || (key->modifiers() == Qt::ControlModifier
                 && (key->key() == Qt::Key_BracketLeft || key->key() == Qt::Key_C
-                    || (inserting() && (key->key() == Qt::Key_U || key->key() == Qt::Key_W || key->key() == Qt::Key_R))))) {
+                    || (inserting() && (QStringLiteral("WURTDEYAOV").contains(QChar(key->key())) || key->key() == Qt::Key_BracketRight))))) {
                 emit escapePressed(); // Close a temporary completion binding before changing modes.
                 return keyPressEvent(key, m_editor);
             }
@@ -126,17 +155,24 @@ bool VimInputBinding::eventFilter(QObject *object, QEvent *event)
                 || key->key() == Qt::Key_End || key->key() == Qt::Key_PageUp || key->key() == Qt::Key_PageDown
                 || key->key() == Qt::Key_Delete || key->key() == Qt::Key_Backspace || key->key() == Qt::Key_Tab
                 || key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter;
+            const bool hasMapping = !m_mappingPending.isEmpty() || [&] {
+                const QString token = keyToken({key->key(), key->modifiers(), key->text()});
+                for (const auto &entry : s_definitions + m_localDefinitions)
+                    if (!entry.lhs.startsWith("abbr:") && (entry.modes & definitionMode()) && entry.lhs.startsWith(token)) return true;
+                return false;
+            }();
             const bool vimControl = key->modifiers() == Qt::ControlModifier
                 && QStringLiteral("RDUFBEYAOIVXC").contains(QChar(key->key()));
-            if (escape || m_mode == Command || (!inserting() && ((plain && vimKey) || vimControl))
+            if (hasMapping || escape || m_mode == Command || (!inserting() && ((plain && vimKey) || vimControl))
                 || (inserting() && key->modifiers() == Qt::ControlModifier
-                    && (key->key() == Qt::Key_W || key->key() == Qt::Key_U || key->key() == Qt::Key_R))) {
+                    && (QStringLiteral("WURTDEYAOV").contains(QChar(key->key())) || key->key() == Qt::Key_BracketRight))) {
                 event->accept();
                 return true;
             }
         } else if (event->type() == QEvent::Resize && !m_commandLine->isHidden()) {
             message(m_commandLine->text());
         } else if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::FocusOut) {
+            flushPendingInput(); m_literalNext = false;
             resetCommand();
             if (visual() || m_mode == Command) { m_commandLine->hide(); setMode(Normal); }
         }
@@ -370,11 +406,18 @@ void VimInputBinding::paste(bool before, int count, const Register *value)
 bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
 {
     if (!m_enabled) return false;
+    const bool resumeInsert = m_insertOnce;
+    const auto returnToInsert = qScopeGuard([this, resumeInsert] {
+        if (resumeInsert && m_insertOnce && m_mode == Normal && !m_count && m_operator.isNull() && !m_g && m_await.isNull()) {
+            m_insertOnce = false; setMode(Insert);
+        }
+    });
     const bool control = event->modifiers() == Qt::ControlModifier;
     if (event->key() == Qt::Key_Escape || (control && (event->key() == Qt::Key_BracketLeft || event->key() == Qt::Key_C))) {
         if (inserting() && m_insertRepeat > 1) {
             const int repetitions = m_insertRepeat - 1; m_insertRepeat = 1;
-            const QList<Key> sequence = m_insertSequence;
+            QList<Key> sequence = m_insertSequence;
+            if (m_openRepeat) sequence.prepend({Qt::Key_Return, Qt::NoModifier, QString("\r")});
             replay(sequence, repetitions);
         }
         QDocumentCursor c = visual() ? m_visualCursor : m_editor->cursor();
@@ -391,6 +434,41 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
             if (!m_editor->isReadOnly()) m_editor->write(readRegister().text);
             m_await = QChar(); m_register = '"'; return true;
         }
+        if (control && event->key() == Qt::Key_V) { m_literalNext = true; return true; }
+        if (control && event->key() == Qt::Key_BracketRight) return true;
+        if (control && event->key() == Qt::Key_O) {
+            endInsert(); m_mode = Normal; m_insertOnce = true;
+            resetCommand(); updateStatus(); return true;
+        }
+        if (control && (event->key() == Qt::Key_A || event->key() == Qt::Key_At)) {
+            if (!m_editor->isReadOnly()) m_editor->write(m_registers.value('.').text);
+            if (event->key() == Qt::Key_At) setMode(Normal);
+            return true;
+        }
+        if (control && (event->key() == Qt::Key_E || event->key() == Qt::Key_Y)) {
+            QDocumentCursor c = m_editor->cursor();
+            const int row = c.lineNumber() + (event->key() == Qt::Key_E ? 1 : -1);
+            if (!m_editor->isReadOnly() && row >= 0 && row < m_editor->document()->lines()) {
+                const QString adjacent = m_editor->document()->line(row).text();
+                if (c.columnNumber() < adjacent.size()) m_editor->write(adjacent.mid(c.columnNumber(), 1));
+            }
+            return true;
+        }
+        if (control && (event->key() == Qt::Key_T || event->key() == Qt::Key_D)) {
+            if (!m_editor->isReadOnly()) {
+                QDocumentCursor c = m_editor->cursor(), change(m_editor->document(), c.lineNumber(), 0);
+                const int width = m_shiftWidth ? m_shiftWidth : QDocument::tabStop();
+                if (event->key() == Qt::Key_T) change.insertText(QString(width, ' '));
+                else {
+                    int amount = 0; const QString text = c.line().text();
+                    while (amount < text.size() && amount < width && text.at(amount).isSpace()) ++amount;
+                    change.movePosition(amount, QDocumentCursor::NextCharacter, QDocumentCursor::KeepAnchor);
+                    change.removeSelectedText();
+                }
+                finish(c);
+            }
+            return true;
+        }
         if (control && event->key() == Qt::Key_R) { m_await = 'r'; return true; }
         if (control && (event->key() == Qt::Key_W || event->key() == Qt::Key_U)) {
             if (m_editor->isReadOnly()) return true;
@@ -401,6 +479,8 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
             c.moveTo(start, QDocumentCursor::KeepAnchor);
             c.removeSelectedText(); finish(c); return true;
         }
+        if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Right || event->key() == Qt::Key_Up || event->key() == Qt::Key_Down
+            || event->key() == Qt::Key_Home || event->key() == Qt::Key_End) m_abbreviationFresh = true;
         return false;
     }
     if (event->key() == Qt::Key_Shift || event->key() == Qt::Key_Control || event->key() == Qt::Key_Alt || event->key() == Qt::Key_Meta) return true;
@@ -451,7 +531,7 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
     if (!m_await.isNull()) {
         const QChar awaiting = m_await; m_await = QChar();
         if (awaiting == '"') {
-            if (key.isLetterOrNumber() || QStringLiteral("\"+*_-.").contains(key)) m_register = key;
+            if (key.isLetterOrNumber() || QStringLiteral("\"+*_-./:%").contains(key)) m_register = key;
             else resetCommand();
             return true;
         }
@@ -586,6 +666,47 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
             return true;
         }
         if (key == 'J') { join(count, false); resetCommand(); return true; }
+        if (key == 'i') {
+            if (!m_editor->isReadOnly() && m_lastInsertPoint.isValid()) { cursor = m_lastInsertPoint; setMode(Insert); finish(cursor); }
+            resetCommand(); return true;
+        }
+        if (key == ';' || key == ',') {
+            if (!m_changes.isEmpty()) {
+                if (m_changeIndex < 0) m_changeIndex = m_changes.size();
+                m_changeIndex = qBound(0, m_changeIndex + (key == ';' ? -count : count), int(m_changes.size()) - 1);
+                finish(m_changes.at(m_changeIndex));
+            }
+            resetCommand(); return true;
+        }
+
+        if (key == 'j' || key == 'k' || key == '0' || key == '^' || key == '$' || key == '_' || key == 'm' || key == 'o') {
+            if (key == 'j' || key == 'k') cursor.movePosition(count, key == 'j' ? QDocumentCursor::Down : QDocumentCursor::Up, QDocumentCursor::ThroughWrap);
+            else if (key == 'o') setOffset(cursor, count - 1);
+            else if (key == '_') {
+                cursor.movePosition(count - 1, QDocumentCursor::Down);
+                const QString text = cursor.line().text(); int end = text.size();
+                while (end > 0 && text.at(end - 1).isSpace()) --end;
+                cursor.setColumnNumber(qMax(0, end - 1));
+            } else {
+                const QDocumentLine line = cursor.line();
+                const int row = line.wrappedLineForCursor(cursor.columnNumber());
+                int first = cursor.columnNumber(), last = first;
+                while (first > 0 && line.wrappedLineForCursor(first - 1) == row) --first;
+                while (last + 1 < line.length() && line.wrappedLineForCursor(last + 1) == row) ++last;
+                if (key == '^') while (first < last && line.text().at(first).isSpace()) ++first;
+                cursor.setColumnNumber(key == '$' ? last : key == 'm' ? (first + last) / 2 : first);
+            }
+            applyMotion(cursor, key == 'j' ? 'l' : key == 'k' ? 'h' : key, key == '$' || key == '_');
+            resetCommand(); return true;
+        }
+        if (key == '*' || key == '#') {
+            QDocumentCursor object = cursor;
+            if (textObject(object, 'w', false, 1)) m_searchPattern = QRegularExpression::escape(object.selectedText());
+            m_searchBackward = key == '#';
+            if (search(cursor, m_searchPattern, m_searchBackward, count)) applyMotion(cursor, 'n');
+            resetCommand(); return true;
+        }
+
         if (key == 'v') {
             if (m_lastVisualAnchor.isValid() && m_lastVisualCursor.isValid()) {
                 m_visualAnchor = m_lastVisualAnchor; m_visualCursor = m_lastVisualCursor;
@@ -602,9 +723,16 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
         }
         if (key == 'e' || key == 'E') {
             for (int i = 0; i < count; ++i) {
+                const bool big = key == 'E';
+                auto category = [big](QChar ch) { return big && !ch.isSpace() && !ch.isNull() ? 1 : wordClass(ch); };
+                const int original = category(cursor.nextChar());
+                const int previous = category(cursor.previousChar());
                 if (!cursor.atStart()) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
-                while (!cursor.atStart() && !cursor.nextChar().isSpace()) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
-                while (!cursor.atStart() && cursor.nextChar().isSpace()) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
+                if (previous == original && original != 0) {
+                    while (!cursor.atStart() && category(cursor.previousChar()) == original) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
+                    if (!cursor.atStart()) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
+                }
+                while (!cursor.atStart() && category(cursor.nextChar()) == 0) cursor.movePosition(1, QDocumentCursor::PreviousCharacter);
             }
             applyMotion(cursor, key, true); resetCommand(); return true;
         }
@@ -727,7 +855,7 @@ bool VimInputBinding::keyPressEvent(QKeyEvent *event, QEditor *)
             if (key == 'O') cursor.moveTo(cursor.lineNumber() - 1, prefix.size());
         }
         setMode(key == 'R' ? Replace : Insert);
-        m_insertRepeat = key == 'o' || key == 'O' ? 1 : count;
+        m_insertRepeat = count; m_openRepeat = key == 'o' || key == 'O';
         finish(cursor);
     } else if (QStringLiteral("xsXDCYS").contains(key) && !key.isNull()) {
         if (key == 'Y' || key == 'S') operate(lines(cursor.lineNumber(), cursor.lineNumber() + count - 1), key == 'Y' ? 'y' : 'c', true);

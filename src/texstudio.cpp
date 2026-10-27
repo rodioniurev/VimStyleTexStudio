@@ -20,6 +20,7 @@
 #include <QAtomicInt>
 #include "texstudio.h"
 #include "latexeditorview.h"
+#include "viminputbinding.h"
 
 #include "smallUsefulFunctions.h"
 
@@ -3045,6 +3046,7 @@ void Texstudio::fileSave(const bool saveSilently, QEditor *editor)
     if (!editor)
 		return;
 
+    if (auto *binding = editor->findChild<VimInputBinding *>()) binding->flushPendingInput();
     if (editor->fileName() == "" || !QFileInfo::exists(editor->fileName())) {
 		removeDiffMarkers();// clean document from diff markers first
         fileSaveAs(editor->fileName(), saveSilently);
@@ -3069,6 +3071,7 @@ void Texstudio::fileSaveAs(const QString &fileName, const bool saveSilently)
 {
 	if (!currentEditorView())
 		return;
+    if (auto *binding = currentEditor()->findChild<VimInputBinding *>()) binding->flushPendingInput();
 
 	// select a directory/filepath
 	QString currentDir = QDir::homePath();
@@ -3183,6 +3186,7 @@ void Texstudio::fileSaveAll(bool alsoUnnamedFiles, bool alwaysCurrentFile)
 
 	foreach (LatexEditorView *edView, editors->editors()) {
 		REQUIRE(edView->editor);
+        if (auto *binding = edView->editor->findChild<VimInputBinding *>()) binding->flushPendingInput();
 
 		if (edView->editor->fileName().isEmpty()) {
 			if ((alsoUnnamedFiles || (alwaysCurrentFile && edView == currentEdView) ) ) {
@@ -3422,6 +3426,7 @@ bool Texstudio::saveFilesForClosing(QList<LatexDocument *> &documentList)
     foreach (LatexDocument *doc, inputDocs) {
 repeatAfterFileSavingFailed:
         LatexEditorView *edView=doc->getEditorView();
+        if (edView) if (auto *binding = edView->editor->findChild<VimInputBinding *>()) binding->flushPendingInput();
         if (!doc->isClean()) {
             if(!doc->isHidden())
                 editors->setCurrentEditor(edView);
@@ -4768,6 +4773,7 @@ void Texstudio::readSettings(bool reread)
     scriptengine::buildManager = &buildManager;
     scriptengine::app = this;
     QSettings *config = configManager.readSettings(reread);
+    qApp->setProperty("vimDefinitionsFile", configManager.configBaseDir + "vim-definitions.json");
     mCompleterCommandsNeedsUpdate=true;
     config->beginGroup("texmaker");
 

@@ -13,6 +13,7 @@
 #include <QStringList>
 
 class QLineEdit;
+class QTimer;
 
 // One instance per editor: pending commands and visual anchors belong to a tab.
 class VimInputBinding : public QObject, public QEditorInputBinding
@@ -23,6 +24,7 @@ public:
     QString id() const override { return QStringLiteral("TXS::VimInputBinding"); }
     QString name() const override { return tr("Vim"); }
     void setEnabled(bool enabled);
+    void flushPendingInput() { if (!m_mappingPending.isEmpty()) flushMapping(); }
     bool keyPressEvent(QKeyEvent *event, QEditor *editor) override;
     bool inputMethodEvent(QInputMethodEvent *event, QEditor *editor) override;
 
@@ -73,6 +75,32 @@ private:
     void addJump();
     void jump(bool backward, int count);
     void changeNumber(int amount);
+    struct Definition { QString lhs, rhs; int modes = 0; bool noremap = false; };
+    static QList<Definition> s_definitions;
+    static QString s_definitionsPath;
+    QList<Definition> m_localDefinitions;
+    QTimer *m_mappingTimer = nullptr;
+    QList<Key> m_mappingPending;
+    int m_mappingMode = 0, m_mappingDepth = 0, m_mappingBudget = 0;
+    bool m_mappingBypass = false, m_expandingAbbreviation = false, m_literalNext = false;
+    bool m_insertOnce = false, m_openRepeat = false;
+    QDocumentCursor m_lastInsertPoint;
+    QList<QDocumentCursor> m_changes;
+    int m_changeIndex = -1, m_sourceDepth = 0;
+    int m_shiftWidth = 0, m_abbreviationFloor = 0;
+    bool m_abbreviationFresh = true;
+    QString m_lastSubstitute, m_lastCommand;
+    bool definitionCommand(const QString &name, const QString &argument);
+    void loadDefinitions();
+    void saveDefinitions();
+    int definitionMode() const;
+    QList<Key> parseKeys(const QString &text) const;
+    QString keyToken(const Key &key) const;
+    void dispatchKeys(const QList<Key> &keys, bool remap);
+    bool mappingKey(QKeyEvent *event);
+    void flushMapping();
+    bool expandAbbreviation(QKeyEvent *event);
+    bool readCommands(const QString &filename);
     void substitute(const QString &expression, int first, int last);
 
     QEditor *m_editor;

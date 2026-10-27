@@ -14,6 +14,13 @@
 #include <QRegularExpression>
 #include <QScrollBar>
 #include <QFile>
+#include <QFileInfo>
+#include <QSaveFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QTimer>
+#include <QDir>
 #include <algorithm>
 #include <limits>
 
@@ -83,6 +90,7 @@ void VimInputBinding::message(const QString &text)
 
 void VimInputBinding::recordKey(QKeyEvent *event)
 {
+    if (m_expandingAbbreviation) return;
     if (event->key() == Qt::Key_Shift || event->key() == Qt::Key_Control
         || event->key() == Qt::Key_Alt || event->key() == Qt::Key_Meta) return;
     const Key key{event->key(), event->modifiers(), event->text()};
@@ -99,7 +107,13 @@ void VimInputBinding::completeChange()
 {
     if (m_mode != Normal || m_replaying) return;
     if (!m_ignoreChange && !m_candidate.isEmpty() && bufferText() != m_beforeChange)
+    {
         m_lastChange = m_candidate;
+        QDocumentCursor point = m_editor->cursor(); point.setAutoUpdated(true);
+        if (m_changes.isEmpty() || m_changes.last() != point) m_changes.append(point);
+        while (m_changes.size() > 100) m_changes.removeFirst();
+        m_changeIndex = -1;
+    }
     m_candidate.clear();
     m_ignoreChange = false;
 }
@@ -114,6 +128,7 @@ void VimInputBinding::beginInsert()
 void VimInputBinding::endInsert()
 {
     if (m_insertBlock) {
+        m_lastInsertPoint = m_editor->cursor(); m_lastInsertPoint.setAutoUpdated(true);
         const QString current = bufferText();
         int first = 0, suffix = 0;
         while (first < current.size() && first < m_insertBase.size() && current.at(first) == m_insertBase.at(first)) ++first;
@@ -175,6 +190,9 @@ void VimInputBinding::storeRegister(const QString &text, int kind, QChar op)
 VimInputBinding::Register VimInputBinding::readRegister() const
 {
     if (m_register == '_') return {};
+    if (m_register == '/') return {m_searchPattern, 0};
+    if (m_register == ':') return {m_lastCommand, 0};
+    if (m_register == '%') return {m_editor->fileName(), 0};
     if (m_register == '"' || m_register == '+' || m_register == '*') {
         const QMimeData *mime = QApplication::clipboard()->mimeData();
         if (!mime) return {};
@@ -207,6 +225,16 @@ void VimInputBinding::enterCommand(QChar prompt)
 bool VimInputBinding::commandKey(QKeyEvent *event)
 {
     const bool control = event->modifiers() == Qt::ControlModifier;
+    if (m_await == 'r') {
+        m_register = event->text().isEmpty() ? QChar('"') : event->text().at(0);
+        const QString text = readRegister().text;
+        m_commandText.insert(m_commandPosition, text); m_commandPosition += text.size();
+        m_await = QChar(); m_register = '"';
+        message(QString(m_prompt) + m_commandText); return true;
+    }
+    if (control && event->key() == Qt::Key_R) { m_await = 'r'; return true; }
+    if (control && event->key() == Qt::Key_V) { m_literalNext = true; return true; }
+    if (control && event->key() == Qt::Key_BracketRight) return true;
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         const QString command = m_commandText;
         if (!command.isEmpty()) {
@@ -216,7 +244,7 @@ bool VimInputBinding::commandKey(QKeyEvent *event)
         }
         m_commandLine->hide();
         m_mode = Normal;
-        if (m_prompt == ':') { m_candidate.clear(); executeEx(command); m_candidate.clear(); }
+        if (m_prompt == ':') { m_lastCommand = command; m_candidate.clear(); executeEx(command); m_candidate.clear(); }
         else {
             if (!command.isEmpty()) m_searchPattern = command;
             m_searchBackward = m_prompt == '?';
@@ -518,7 +546,7 @@ void VimInputBinding::transform(QDocumentCursor selection, QChar op, int count)
         selection.beginEditBlock();
         for (int line = last; line >= first; --line) {
             QDocumentCursor cursor(m_editor->document(), line, 0);
-            const int width = qMax(1, QDocument::tabStop()) * count;
+            const int width = qMax(1, m_shiftWidth ? m_shiftWidth : QDocument::tabStop()) * count;
             if (op == '>') cursor.insertText(m_editor->flag(QEditor::ReplaceIndentTabs) ? QString(width, ' ') : QString(count, '\t'));
             else {
                 const QString text = cursor.line().text();
@@ -661,6 +689,7 @@ void VimInputBinding::substitute(const QString &expression, int first, int last)
 {
     if (m_editor->isReadOnly()) { message(tr("Read-only document")); return; }
     if (expression.size() < 2) { message(tr("Expected :s/pattern/replacement/flags")); return; }
+    m_lastSubstitute = expression;
     const QChar delimiter = expression.at(1);
     QStringList parts;
     QString part;
@@ -725,19 +754,53 @@ void VimInputBinding::executeEx(QString command)
 {
     command = command.trimmed();
     if (command.startsWith(':')) command.remove(0, 1);
+    if (command == "&" || command == "s" || command == "substitute") {
+        if (m_lastSubstitute.isEmpty()) { message(tr("No previous substitution")); return; }
+        command = m_lastSubstitute;
+    }
     int first = m_editor->cursor().lineNumber(), last = first;
     bool ranged = false;
     if (m_rangeFirst >= 0) { first = m_rangeFirst; last = m_rangeLast; ranged = true; }
     if (command.startsWith("'<,'>")) command.remove(0, 5);
     if (command.startsWith('%')) { first = 0; last = m_editor->document()->lines() - 1; command.remove(0, 1); ranged = true; }
     else {
-        QRegularExpression range("^([0-9]+|\\.|\\$)(?:,([0-9]+|\\.|\\$))?");
-        auto match = range.match(command);
-        if (match.hasMatch()) {
-            auto address = [this](const QString &s) { return s == "." ? m_editor->cursor().lineNumber() : s == "$" ? m_editor->document()->lines() - 1 : s.toInt() - 1; };
-            first = address(match.captured(1));
-            last = match.captured(2).isEmpty() ? first : address(match.captured(2));
-            command.remove(0, match.capturedLength()); ranged = true;
+        int position = 0;
+        auto address = [&](int base, bool &found) {
+            found = true; int result = base;
+            if (position < command.size() && command.at(position).isDigit()) {
+                const int start = position;
+                while (position < command.size() && command.at(position).isDigit()) ++position;
+                result = command.mid(start, position - start).toInt() - 1;
+            } else if (position < command.size() && command.at(position) == '.') ++position;
+            else if (position < command.size() && command.at(position) == '$') { ++position; result = m_editor->document()->lines() - 1; }
+            else if (position + 1 < command.size() && command.at(position) == '\'') {
+                const QChar mark = command.at(position + 1); position += 2;
+                const QDocumentCursor value = mark == '<' ? m_lastVisualAnchor : mark == '>' ? m_lastVisualCursor : m_marks.value(mark);
+                result = value.isValid() ? value.lineNumber() : -100000;
+            } else if (position < command.size() && (command.at(position) == '/' || command.at(position) == '?')) {
+                const QChar delimiter = command.at(position++); const int start = position;
+                while (position < command.size() && (command.at(position) != delimiter || escaped(command, position))) ++position;
+                if (position == command.size()) { result = -100000; return result; }
+                const QString pattern = command.mid(start, position++ - start);
+                QDocumentCursor value(m_editor->document(), base, 0);
+                result = search(value, pattern.isEmpty() ? m_searchPattern : pattern, delimiter == '?', 1) ? value.lineNumber() : -100000;
+            } else if (position >= command.size() || (command.at(position) != '+' && command.at(position) != '-')) found = false;
+            while (found && position < command.size() && (command.at(position) == '+' || command.at(position) == '-')) {
+                const int sign = command.at(position++) == '+' ? 1 : -1, start = position;
+                while (position < command.size() && command.at(position).isDigit()) ++position;
+                result += sign * (start == position ? 1 : command.mid(start, position - start).toInt());
+            }
+            return result;
+        };
+        bool found = false; const int start = address(first, found);
+        if (found) {
+            first = last = start; ranged = true;
+            if (position < command.size() && (command.at(position) == ',' || command.at(position) == ';')) {
+                const bool relative = command.at(position++) == ';';
+                last = address(relative ? first : m_editor->cursor().lineNumber(), found);
+                if (!found) last = m_editor->document()->lines() - 1;
+            }
+            command.remove(0, position);
         }
     }
     if (first < 0 || last < first || last >= m_editor->document()->lines()) { message(tr("Invalid line range")); return; }
@@ -746,6 +809,7 @@ void VimInputBinding::executeEx(QString command)
     int globalPrefix = command.startsWith("vglobal") ? 7 : command.startsWith("global") ? 6
         : command.size() > 1 && (command.at(0) == 'g' || command.at(0) == 'v') && !command.at(1).isLetterOrNumber() && !command.at(1).isSpace() ? 1 : 0;
     if (globalPrefix && globalPrefix < command.size()) {
+        if (!ranged) { first = 0; last = m_editor->document()->lines() - 1; }
         const QChar delimiter = command.at(globalPrefix);
         int end = globalPrefix + 1;
         while (end < command.size() && (command.at(end) != delimiter || escaped(command, end))) ++end;
@@ -761,7 +825,7 @@ void VimInputBinding::executeEx(QString command)
             || (action.startsWith('s') && action.size() > 1 && !action.at(1).isLetterOrNumber()))) {
             message(tr("Global supports delete, yank, print and substitute")); return;
         }
-        if (!ranged) { first = 0; last = m_editor->document()->lines() - 1; }
+
         QList<int> selected; QStringList contents;
         for (int line = first; line <= last; ++line) {
             const QString text = m_editor->document()->line(line).text();
@@ -783,25 +847,13 @@ void VimInputBinding::executeEx(QString command)
     if (command.startsWith('s') && command.size() > 1 && !command.at(1).isLetter() && !command.at(1).isSpace()) {
         substitute(command, first, last); return;
     }
-    const int split = command.indexOf(' ');
+    const int split = command.indexOf(QRegularExpression("\\s"));
     const QString name = split < 0 ? command : command.left(split);
     const QString argument = split < 0 ? QString() : command.mid(split + 1).trimmed();
+    if (definitionCommand(name, argument)) return;
+    if (name == "source" || name == "so") { readCommands(argument); return; }
     if (name == "normal" || name == "normal!") {
-        QList<Key> keys;
-        for (int i = 0; i < argument.size(); ++i) {
-            if (argument.at(i) == '<') {
-                const int end = argument.indexOf('>', i + 1);
-                const QString token = end >= 0 ? argument.mid(i + 1, end - i - 1).toLower() : QString();
-                if (token == "esc" || token == "cr" || token == "enter" || token == "tab") {
-                    keys.append({token == "esc" ? Qt::Key_Escape : token == "tab" ? Qt::Key_Tab : Qt::Key_Return, Qt::NoModifier, QString()});
-                    i = end; continue;
-                }
-                if (token.startsWith("c-") && token.size() == 3) {
-                    keys.append({token.at(2).toUpper().unicode(), Qt::ControlModifier, QString()}); i = end; continue;
-                }
-            }
-            keys.append({argument.at(i).toUpper().unicode(), Qt::NoModifier, QString(argument.at(i))});
-        }
+        const QList<Key> keys = parseKeys(argument);
         QList<QDocumentCursor> targets;
         for (int line = first; line <= last; ++line) {
             QDocumentCursor cursor(m_editor->document(), line, 0); cursor.setAutoUpdated(true); cursor.setAutoErasable(true); targets.append(cursor);
@@ -809,10 +861,44 @@ void VimInputBinding::executeEx(QString command)
         m_editor->document()->beginMacro();
         for (const QDocumentCursor &cursor : targets) {
             if (!cursor.isValid()) continue;
-            finish(cursor); replay(keys, 1);
+            finish(cursor); dispatchKeys(keys, name == "normal");
             if (inserting()) { QKeyEvent escape(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier); QApplication::sendEvent(m_editor, &escape); }
         }
         m_editor->document()->endMacro();
+        return;
+    }
+    if (name == "co" || name == "copy" || name == "t" || name == "m" || name == "move" || name == "pu" || name == "put" || name == "put!") {
+        if (m_editor->isReadOnly()) { message(tr("Read-only document")); return; }
+        QStringList contents = m_editor->document()->textLines();
+        int target = last;
+        const bool put = name.startsWith("pu");
+        if (!put) {
+            bool ok = false;
+            if (argument == "$") target = contents.size() - 1;
+            else if (argument == ".") target = m_editor->cursor().lineNumber();
+            else { target = argument.toInt(&ok) - 1; if (!ok) { message(tr("Expected destination line, . or $")); return; } }
+            if (target < -1 || target >= contents.size()) { message(tr("Invalid destination")); return; }
+        }
+        QStringList inserted;
+        if (put) {
+            if (!argument.isEmpty()) m_register = argument.at(0);
+            QString text = readRegister().text;
+            if (text.isEmpty()) return;
+            if (text.endsWith('\n')) text.chop(1);
+            inserted = text.split('\n');
+            if (name == "put!") --target;
+        } else {
+            for (int line = first; line <= last; ++line) inserted.append(contents.at(line));
+            if (name == "m" || name == "move") {
+                if (target >= first && target <= last) { message(tr("Destination is inside the moved range")); return; }
+                for (int line = last; line >= first; --line) contents.removeAt(line);
+                if (target > last) target -= last - first + 1;
+            }
+        }
+        for (int index = 0; index < inserted.size(); ++index) contents.insert(target + 1 + index, inserted.at(index));
+        QDocumentCursor all(m_editor->document(), 0, 0); all.movePosition(1, QDocumentCursor::End, QDocumentCursor::KeepAnchor);
+        all.beginEditBlock(); all.insertText(contents.join('\n')); all.endEditBlock();
+        finish(QDocumentCursor(m_editor->document(), target + inserted.size(), 0));
         return;
     }
     if (name == "r" || name == "read") {
@@ -845,7 +931,7 @@ void VimInputBinding::executeEx(QString command)
         join(ranged ? last - first + 1 : 2, true);
     } else if (name == "sort" || name == "sort!") {
         if (m_editor->isReadOnly()) { message(tr("Read-only document")); return; }
-        if (!ranged) { first = 0; last = m_editor->document()->lines() - 1; }
+
         QStringList values;
         for (int line = first; line <= last; ++line) values.append(m_editor->document()->line(line).text());
         std::sort(values.begin(), values.end());
@@ -866,6 +952,11 @@ void VimInputBinding::executeEx(QString command)
             else if (option == "wrap" || option == "nowrap") m_editor->setLineWrapping(option == "wrap");
             else if (option == "ai" || option == "autoindent" || option == "noai" || option == "noautoindent") m_editor->setFlag(QEditor::AutoIndent, !option.startsWith("no"));
             else if (option == "et" || option == "expandtab" || option == "noet" || option == "noexpandtab") m_editor->setFlag(QEditor::ReplaceIndentTabs, !option.startsWith("no"));
+            else if (option.startsWith("sw=") || option.startsWith("shiftwidth=")) {
+                bool ok; int width = option.section('=', 1).toInt(&ok);
+                if (!ok || width < 0 || width > 32) { message(tr("shiftwidth must be between 0 and 32")); return; }
+                m_shiftWidth = width;
+            }
             else if (option.startsWith("ts=") || option.startsWith("tabstop=")) {
                 bool ok = false; int width = option.section('=', 1).toInt(&ok);
                 if (ok && width > 0 && width <= 32) QDocument::setTabStop(width);
@@ -884,4 +975,307 @@ void VimInputBinding::executeEx(QString command)
         message(marks.join("  "));
     } else if (name == "help") message(tr("Vim command reference: VIM_MODE.md beside texstudio.exe"));
     else message(tr("Unsupported Ex command: %1").arg(name));
+}
+
+
+QList<VimInputBinding::Definition> VimInputBinding::s_definitions;
+QString VimInputBinding::s_definitionsPath;
+
+int VimInputBinding::definitionMode() const
+{
+    return inserting() ? 8 : m_mode == Command ? 16 : visual() ? 2 : !m_operator.isNull() ? 4 : 1;
+}
+
+void VimInputBinding::loadDefinitions()
+{
+    const QString path = qApp->property("vimDefinitionsFile").toString();
+    if (path == s_definitionsPath) return;
+    s_definitionsPath = path;
+    s_definitions.clear();
+    if (path.isEmpty()) return;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) return;
+    for (const auto &item : QJsonDocument::fromJson(file.readAll()).array()) {
+        const QJsonObject obj = item.toObject();
+        const QString lhs = obj.value("lhs").toString();
+        const int modes = obj.value("modes").toInt() & 31;
+        if (!lhs.isEmpty() && modes) s_definitions.append({lhs, obj.value("rhs").toString(), modes, obj.value("noremap").toBool()});
+    }
+}
+
+void VimInputBinding::saveDefinitions()
+{
+    if (s_definitionsPath.isEmpty()) return;
+    QJsonArray entries;
+    for (const Definition &entry : s_definitions)
+        entries.append(QJsonObject{{"lhs", entry.lhs}, {"rhs", entry.rhs}, {"modes", entry.modes}, {"noremap", entry.noremap}});
+    QDir().mkpath(QFileInfo(s_definitionsPath).absolutePath());
+    QSaveFile file(s_definitionsPath);
+    if (!file.open(QIODevice::WriteOnly) || file.write(QJsonDocument(entries).toJson()) < 0 || !file.commit())
+        message(tr("Could not save Vim definitions: %1").arg(file.errorString()));
+}
+
+QList<VimInputBinding::Key> VimInputBinding::parseKeys(const QString &text) const
+{
+    QList<Key> keys;
+    for (int i = 0; i < text.size(); ++i) {
+        if (text.at(i) == '<') {
+            int end = text.indexOf('>', i + 1);
+            QString token = end >= 0 ? text.mid(i + 1, end - i - 1).toLower() : QString();
+            if (token == "nop") { i = end; continue; }
+            if (token == "leader") token = "bslash";
+            int code = 0; QString value; Qt::KeyboardModifiers modifiers = Qt::NoModifier;
+            if (token.startsWith("c-") && token.size() == 3) {
+                code = token.at(2).toUpper().unicode(); modifiers = Qt::ControlModifier;
+            } else {
+                static const QHash<QString, int> special{{"esc", Qt::Key_Escape}, {"cr", Qt::Key_Return}, {"enter", Qt::Key_Return},
+                    {"tab", Qt::Key_Tab}, {"bs", Qt::Key_Backspace}, {"del", Qt::Key_Delete}, {"left", Qt::Key_Left},
+                    {"right", Qt::Key_Right}, {"up", Qt::Key_Up}, {"down", Qt::Key_Down}, {"home", Qt::Key_Home}, {"end", Qt::Key_End}};
+                code = special.value(token);
+                if (token == "space") value = " ";
+                else if (token == "lt") value = "<";
+                else if (token == "bar") value = "|";
+                else if (token == "bslash") value = "\\";
+                else if (token.startsWith('f')) {
+                    bool ok; const int n = token.mid(1).toInt(&ok);
+                    if (ok && n >= 1 && n <= 35) code = Qt::Key_F1 + n - 1;
+                }
+                if (!value.isEmpty()) code = value.at(0).toUpper().unicode();
+            }
+            if (code) { keys.append({code, modifiers, value}); i = end; continue; }
+        }
+        const QChar ch = text.at(i);
+        keys.append({ch.toUpper().unicode(), Qt::NoModifier, QString(ch)});
+    }
+    return keys;
+}
+
+QString VimInputBinding::keyToken(const Key &key) const
+{
+    if (key.modifiers == Qt::ControlModifier) return QString("<C-%1>").arg(QChar(key.key).toLower());
+    static const QHash<int, QString> special{{Qt::Key_Escape, "<Esc>"}, {Qt::Key_Return, "<CR>"}, {Qt::Key_Enter, "<CR>"},
+        {Qt::Key_Tab, "<Tab>"}, {Qt::Key_Backspace, "<BS>"}, {Qt::Key_Delete, "<Del>"}, {Qt::Key_Left, "<Left>"},
+        {Qt::Key_Right, "<Right>"}, {Qt::Key_Up, "<Up>"}, {Qt::Key_Down, "<Down>"}, {Qt::Key_Home, "<Home>"}, {Qt::Key_End, "<End>"}};
+    if (key.key >= Qt::Key_F1 && key.key <= Qt::Key_F35) return QString("<F%1>").arg(key.key - Qt::Key_F1 + 1);
+    if (special.contains(key.key)) return special.value(key.key);
+    if (!(key.modifiers & (Qt::AltModifier | Qt::MetaModifier))) return key.text;
+    return QString();
+}
+
+void VimInputBinding::dispatchKeys(const QList<Key> &keys, bool remap)
+{
+    if (m_mappingDepth >= 20) { message(tr("Mapping recursion limit reached")); return; }
+    if (!m_mappingDepth) m_mappingBudget = 100000;
+    ++m_mappingDepth;
+    const bool previous = m_mappingBypass;
+    m_mappingBypass = !remap;
+    for (const Key &key : keys) {
+        if (--m_mappingBudget < 0) { message(tr("Mapping execution limit reached")); break; }
+        QKeyEvent event(QEvent::KeyPress, key.key, key.modifiers, key.text);
+        QApplication::sendEvent(m_editor, &event);
+    }
+    m_mappingBypass = previous;
+    --m_mappingDepth;
+}
+
+bool VimInputBinding::mappingKey(QKeyEvent *event)
+{
+    if (m_mappingBypass || m_literalNext || event->key() == Qt::Key_Shift || event->key() == Qt::Key_Control
+        || event->key() == Qt::Key_Alt || event->key() == Qt::Key_Meta) return false;
+    const Key incoming{event->key(), event->modifiers(), event->text()};
+    const QString token = keyToken(incoming);
+    if (token.isEmpty()) return false;
+    if (!m_mappingPending.isEmpty() && m_mappingMode != definitionMode()) flushMapping();
+    if (m_mappingPending.isEmpty()) m_mappingMode = definitionMode();
+    m_mappingPending.append(incoming);
+    QString lhs;
+    for (const Key &key : m_mappingPending) lhs += keyToken(key);
+    const Definition *exact = nullptr;
+    bool longer = false;
+    const QList<Definition> entries = s_definitions + m_localDefinitions;
+    for (const Definition &entry : entries) {
+        if (!(entry.modes & m_mappingMode) || entry.lhs.startsWith("abbr:")) continue;
+        if (entry.lhs == lhs) exact = &entry;
+        else if (entry.lhs.startsWith(lhs)) longer = true;
+    }
+    if (longer) { m_mappingTimer->start(); return true; }
+    if (exact) {
+        const Definition match = *exact;
+        m_mappingPending.clear(); m_mappingTimer->stop();
+        dispatchKeys(parseKeys(match.rhs), !match.noremap); return true;
+    }
+    if (m_mappingPending.size() > 1) { flushMapping(); return true; }
+    m_mappingPending.clear(); return false;
+}
+
+void VimInputBinding::flushMapping()
+{
+    m_mappingTimer->stop();
+    const QList<Key> keys = m_mappingPending;
+    m_mappingPending.clear();
+    QString lhs;
+    for (const Key &key : keys) lhs += keyToken(key);
+    const QList<Definition> entries = s_definitions + m_localDefinitions;
+    const Definition *match = nullptr;
+    int consumed = 0;
+    for (const Definition &entry : entries) {
+        if (entry.lhs.startsWith("abbr:") || !(entry.modes & m_mappingMode) || !lhs.startsWith(entry.lhs)) continue;
+        if (!match || entry.lhs.size() >= match->lhs.size()) match = &entry;
+    }
+    if (match) {
+        int length = 0;
+        while (consumed < keys.size() && length < match->lhs.size()) length += keyToken(keys.at(consumed++)).size();
+        dispatchKeys(parseKeys(match->rhs), !match->noremap);
+    } else if (!keys.isEmpty()) { dispatchKeys({keys.first()}, false); consumed = 1; }
+    if (consumed < keys.size()) dispatchKeys(keys.mid(consumed), true);
+}
+
+bool VimInputBinding::definitionCommand(const QString &name, const QString &argument)
+{
+    // Resolve only unambiguous abbreviations; unrelated Ex commands are untouched.
+    static const QStringList names{"abbreviate", "iabbrev", "cabbrev", "unabbreviate", "iunabbrev", "cunabbrev",
+        "noreabbrev", "inoreabbrev", "cnoreabbrev", "abclear", "iabclear", "cabclear",
+        "map", "nmap", "vmap", "xmap", "omap", "imap", "cmap", "map!", "noremap", "nnoremap", "vnoremap", "xnoremap", "onoremap", "inoremap", "cnoremap", "noremap!",
+        "unmap", "nunmap", "vunmap", "xunmap", "ounmap", "iunmap", "cunmap", "unmap!",
+        "mapclear", "nmapclear", "vmapclear", "xmapclear", "omapclear", "imapclear", "cmapclear", "mapclear!"};
+    static const QHash<QString, QString> aliases{{"ab", "abbreviate"}, {"abb", "abbreviate"}, {"abc", "abclear"},
+        {"ia", "iabbrev"}, {"iab", "iabbrev"}, {"ca", "cabbrev"}, {"cab", "cabbrev"},
+        {"una", "unabbreviate"}, {"iun", "iunabbrev"}, {"cun", "cunabbrev"},
+        {"norea", "noreabbrev"}, {"inorea", "inoreabbrev"}, {"cnorea", "cnoreabbrev"}};
+    QString full;
+    if (aliases.contains(name)) full = aliases.value(name);
+    else if (names.contains(name)) full = name;
+    else {
+        QStringList matches;
+        for (const QString &candidate : names) if (candidate.startsWith(name)) matches.append(candidate);
+        if (matches.size() != 1 || name.size() < 2) return false;
+        full = matches.first();
+    }
+    const bool abbreviation = full.contains("abbrev") || full.endsWith("abclear");
+    int modes = abbreviation ? 24 : full.endsWith('!') ? 24 : 7;
+    const QChar prefix = full.at(0);
+    if (prefix == 'i') modes = 8;
+    else if (prefix == 'c') modes = 16;
+    else if (prefix == 'n' && (full.startsWith("nn") || full.startsWith("nm") || full.startsWith("nu"))) modes = 1;
+    else if (prefix == 'v' || prefix == 'x') modes = 2;
+    else if (prefix == 'o') modes = 4;
+    const bool clear = full.contains("clear"), remove = full.contains("unmap") || full.contains("unabbrev");
+    QString args = argument;
+    bool local = false;
+    while (args.startsWith('<')) {
+        const int end = args.indexOf('>'); if (end < 0) break;
+        const QString option = args.left(end + 1);
+        if (option == "<buffer>") local = true;
+        else if (option == "<expr>" || option == "<script>" || option == "<SID>") { message(tr("Unsupported definition attribute: %1").arg(option)); return true; }
+        else if (option != "<silent>") break;
+        args = args.mid(end + 1).trimmed();
+    }
+    const int split = args.indexOf(QRegularExpression("\\s"));
+    const QString rawLhs = split < 0 ? args : args.left(split);
+    const QString rhs = split < 0 ? QString() : args.mid(split + 1); // Preserve RHS spaces.
+    QString lhs = rawLhs;
+    if (abbreviation) {
+        if (!lhs.isEmpty()) {
+            auto keyword = [](QChar ch) { return ch.isLetterOrNumber() || ch == '_'; };
+            bool valid = !lhs.contains(QRegularExpression("\\s"));
+            if (keyword(lhs.back())) {
+                const bool first = keyword(lhs.front());
+                for (int i = 0; i + 1 < lhs.size(); ++i) if (keyword(lhs.at(i)) != first) valid = false;
+            }
+            if (!valid) { message(tr("Invalid abbreviation")); return true; }
+        }
+        lhs.prepend("abbr:");
+    } else {
+        lhs.clear(); for (const Key &key : parseKeys(rawLhs)) lhs += keyToken(key);
+    }
+    QList<Definition> &entries = local ? m_localDefinitions : s_definitions;
+    if (clear || remove || split >= 0) {
+        if (!clear && rawLhs.isEmpty()) { message(tr("Expected left-hand side")); return true; }
+        bool found = false;
+        for (int i = entries.size() - 1; i >= 0; --i) {
+            Definition &entry = entries[i];
+            if (entry.lhs.startsWith("abbr:") != abbreviation || !(entry.modes & modes)) continue;
+            if (clear || entry.lhs == lhs || (remove && entry.rhs == rawLhs)) {
+                found = true; entry.modes &= ~modes;
+                if (!entry.modes) entries.removeAt(i);
+            }
+        }
+        if (split >= 0 && !remove && !clear) entries.append({lhs, rhs, modes, full.contains("nore")});
+        if (!local) saveDefinitions();
+        message(remove && !found ? tr("Definition not found") : tr("Vim definitions updated"));
+    } else {
+        QStringList output;
+        for (const Definition &entry : s_definitions + m_localDefinitions) {
+            if (entry.lhs.startsWith("abbr:") != abbreviation || !(entry.modes & modes) || !entry.lhs.startsWith(lhs)) continue;
+            QString label;
+            if (abbreviation && entry.modes == 24) label = "!";
+            else {
+                for (const auto &mode : QList<QPair<int, QString>>{{1, "n"}, {2, "v"}, {4, "o"}, {8, "i"}, {16, "c"}})
+                    if (entry.modes & mode.first) label += mode.second;
+            }
+            output.append(label + " " + (abbreviation ? entry.lhs.mid(5) : entry.lhs) + " -> " + entry.rhs);
+        }
+        message(output.isEmpty() ? tr("No matching definitions") : output.join("  "));
+    }
+    return true;
+}
+
+bool VimInputBinding::expandAbbreviation(QKeyEvent *event)
+{
+    if (m_expandingAbbreviation || m_literalNext || !m_await.isNull() || (!inserting() && m_mode != Command)) return false;
+    const bool control = event->modifiers() == Qt::ControlModifier;
+    const bool explicitTrigger = control && event->key() == Qt::Key_BracketRight;
+    const bool escape = event->key() == Qt::Key_Escape || (control && event->key() == Qt::Key_BracketLeft);
+    const bool enter = event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter;
+    auto keyword = [](QChar ch) { return ch.isLetterOrNumber() || ch == '_'; };
+    if (!explicitTrigger && !escape && !enter && (control || event->text().isEmpty() || keyword(event->text().at(0)))) return false;
+    const int mode = definitionMode();
+    const QDocumentCursor cursor = m_editor->cursor();
+    const QString before = m_mode == Command ? m_commandText.left(m_commandPosition) : cursor.line().text().left(cursor.columnNumber());
+    const Definition *match = nullptr;
+    const QList<Definition> entries = s_definitions + m_localDefinitions;
+    for (const Definition &entry : entries) {
+        if (!(entry.modes & mode) || !entry.lhs.startsWith("abbr:")) continue;
+        const QString lhs = entry.lhs.mid(5);
+        if (lhs.isEmpty() || !before.endsWith(lhs)) continue;
+        const int start = before.size() - lhs.size();
+        const int absoluteStart = offset(cursor) - lhs.size();
+        if (inserting() && absoluteStart < m_abbreviationFloor) continue;
+        if (start > 0 && !(inserting() && absoluteStart == m_abbreviationFloor)) {
+            const QChar preceding = before.at(start - 1);
+            if (!keyword(lhs.back()) ? !preceding.isSpace() : keyword(lhs.front()) ? keyword(preceding) : !keyword(preceding) && !preceding.isSpace()) continue;
+            if (lhs.size() == 1 && keyword(lhs.back()) && !preceding.isSpace()) continue;
+        }
+        if (!match || lhs.size() >= match->lhs.size() - 5) match = &entry;
+    }
+    if (!match || (inserting() && m_editor->isReadOnly())) return explicitTrigger;
+    const Definition entry = *match;
+    const int length = entry.lhs.size() - 5;
+    if (m_mode == Command) { m_commandText.remove(m_commandPosition - length, length); m_commandPosition -= length; }
+    else {
+        QDocumentCursor selection = cursor;
+        selection.movePosition(length, QDocumentCursor::PreviousCharacter, QDocumentCursor::KeepAnchor);
+        selection.removeSelectedText(); m_editor->setCursor(selection);
+    }
+    emit escapePressed();
+    m_expandingAbbreviation = true;
+    dispatchKeys(parseKeys(entry.rhs), !entry.noremap);
+    m_expandingAbbreviation = false;
+    emit escapePressed();
+    return explicitTrigger;
+}
+
+bool VimInputBinding::readCommands(const QString &filename)
+{
+    if (m_sourceDepth >= 20) { message(tr("Source nesting limit reached")); return false; }
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) { message(file.errorString()); return false; }
+    ++m_sourceDepth;
+    const QStringList commands = QString::fromUtf8(file.readAll()).split('\n');
+    for (const QString &line : commands) {
+        const QString command = line.trimmed();
+        if (!command.isEmpty() && !command.startsWith('"')) executeEx(command);
+    }
+    --m_sourceDepth;
+    return true;
 }

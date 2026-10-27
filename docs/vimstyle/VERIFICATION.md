@@ -45,3 +45,23 @@ This coverage does not establish equivalence with every Vim version or command.
 Regenerate fixtures with `python3 src/tests/generate_vim_object_oracle.py` when
 Vim is on PATH. Changing the reference Vim version can change expected semantics;
 review the fixture diff rather than accepting it automatically.
+
+
+## 0.2 extension coverage
+
+Windows 11 x64 / Qt 6.12: 13,687 passed, 0 failed, 0 skipped.
+
+The new suite adds abbreviation boundaries, explicit/literal expansion,
+command-line definitions, mode-specific mappings, timeout/recursion limits,
+profile persistence, pending mapping input at save/focus/disable boundaries, source imports, relative addresses, line copy/move/put,
+counted open-line input and additional motions. Independent fixtures in
+`src/tests/vim_extension_oracle.json` and `nvim_extension_oracle.json` were
+produced by Vim 8.2 and Neovim 0.11.2 respectively; all 291 results agree.
+
+Run `python3 src/tests/generate_vim_extension_oracle.py` under WSL to regenerate
+Vim fixtures, or append `nvim` for Neovim. Each scenario uses a fresh process.
+A no-op InsertCharPre hook disables batched typeahead, matching the individual
+Qt key events used by the editor tests; it does not alter input characters.
+
+These fixtures are a compatibility sample, not proof of complete Vim/Neovim
+compatibility. See VIM_MODE.md for unsupported language/runtime features.

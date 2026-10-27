@@ -6,7 +6,7 @@ import sys
 import zipfile
 
 dist = Path(sys.argv[1]).resolve()
-archive = dist.with_suffix('.zip')
+archive = dist.parent / (dist.name + '.zip')
 with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as output:
     for file in sorted(dist.rglob('*')):
         if file.is_file():

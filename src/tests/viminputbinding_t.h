@@ -6,6 +6,7 @@
 #define Header_Vim_Input_Binding_Test
 #ifndef QT_NO_DEBUG
 #include <QObject>
+#include <QVariant>
 #include <memory>
 class QEditor;
 class VimInputBinding;
@@ -55,6 +56,17 @@ private slots:
     void saveDuringInsert_data();
     void saveDuringInsert();
     void changeBlockSaveBoundaries();
+    void abbreviations_data();
+    void abbreviations();
+    void abbreviationModesAndRemoval();
+    void mappings();
+    void mappingModesAndRepeat();
+    void mappingTimeoutAndRecursion();
+    void definitionsPersistence();
+    void insertExtensions();
+    void extraMotionsAndEx();
+    void extensionOracle_data();
+    void extensionOracle();
 private:
     void keys(const char *text);
     void ex(const QString &text);
@@ -63,6 +75,7 @@ private:
     VimInputBinding *vim = nullptr;
     std::unique_ptr<QMimeData> clipboard;
     int tabStop = 4;
+    QVariant definitionsFile;
 };
 #endif
 #endif

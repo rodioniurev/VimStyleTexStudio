@@ -9,7 +9,7 @@ import sys
 import pefile
 
 sdk, source, build, dist = map(lambda p: Path(p).resolve(), sys.argv[1:5])
-release = sys.argv[5] if len(sys.argv) > 5 else '0.1.0-preview.2'
+release = sys.argv[5] if len(sys.argv) > 5 else '0.2.0-preview.1'
 dist.mkdir(parents=True, exist_ok=True)
 shutil.copy2(build / 'texstudio.exe', dist)
 env = dict(os.environ, PATH=str(sdk / 'bin') + os.pathsep + os.environ['PATH'])

@@ -34,6 +34,8 @@ command; Up/Down recall up to 100 entries per prompt.
 | `> <` + motion, `>> <<` | Indent/unindent with the document tab width |
 | `gu gU g~` + motion/object; `guu gUU g~~` | Lowercase, uppercase, toggle case |
 | `~` | Toggle character case and advance |
+| `gj gk`, `g0 g^ g$ gm`, `g_`, `Ngo` | Wrapped-line movement/boundaries, last nonblank, logical character offset |
+| `gi`, `g;`, `g,` | Resume at the last insertion point; navigate recent change positions |
 | `J`, `gJ` | Join with whitespace cleanup / join without whitespace cleanup |
 | `p P` | Paste after/before; preserve character/line/block register kind |
 | `v V Ctrl+v` | Character/line/rectangular Visual mode |
@@ -51,7 +53,7 @@ command; Up/Down recall up to 100 entries per prompt.
 
 Counts apply to motions, operators, paste, replace, undo/redo and macro playback:
 `3w`, `2dd`, `d2w`, `2d3w`, `3p`. `i a I A R` support counted input, e.g.
-`3iabc<Esc>`. Opening a line with `o/O` currently opens one line regardless of count.
+`3iabc<Esc>`. `o/O` repeat the entered line for the requested count.
 Counts are capped at 10,000. Macros have a depth limit of 10 and a shared budget
 of 100,000 replayed key events per invocation.
 
@@ -83,13 +85,18 @@ shared across tabs. `0` holds the last yank; `1-9` hold line/multiline deletes;
 `-` holds the last small delete. `_` discards without changing the clipboard.
 The unnamed register and `+`/`*` use the Windows system clipboard; changes in
 other applications replace that content. Named registers remain available.
+Special registers `/`, `:`, `%` provide the last search, last Ex command and current filename.
 Insert-mode `Ctrl+r{register}` inserts a register; `Ctrl+w` erases the preceding
-word, `Ctrl+u` erases to the line start. These are also recorded in macros.
+word, `Ctrl+u` erases to the line start. `Ctrl+o` runs one Normal command and
+returns to Insert. `Ctrl+t/d` add/remove indentation (`shiftwidth`, falling back
+to `tabstop`); `Ctrl+e/y` copy a character from below/above, and `Ctrl+a` inserts
+the last inserted text. `Ctrl+v` quotes the next typed character (numeric codes
+and digraphs are not implemented). These are also recorded in macros.
 
 ## Search
 
 `/pattern<Enter>` searches forward; `?pattern<Enter>` searches backward.
-`n/N` repeat in the same/opposite direction; `*/#` search the word under the
+`n/N` repeat in the same/opposite direction; `g*`/`g#` search without word boundaries; `*/#` search the word under the
 cursor forward/backward. Search wraps. An empty prompt repeats the last pattern.
 Operators accept searches, for example `d/section<Enter>`.
 
@@ -116,11 +123,17 @@ it does not highlight all matches. `:set ignorecase smartcase` affects search.
 | `:global/pattern/{action}`, `:vglobal/pattern/{action}` | Actions: delete, yank, print, substitute |
 | `:sort`, `:sort!`, `:sort u` | Sort ascending/descending; optionally remove duplicates |
 | `:normal keys`, `:normal! keys` | Execute commands on the current line/range; accepts `<Esc>`, `<CR>`, `<Tab>`, `<C-r>` notation |
+| `:copy N`, `:t N`, `:move N` | Copy/move addressed lines after N (`0`, `.`, `$` also accepted) |
+| `:put [register]`, `:put! [register]` | Insert register contents as lines after/before the address |
+| `:source filename`, `:so filename` | Read a UTF-8 file of supported Ex commands; blank lines and comment lines are skipped |
+| `:&`, `:s` | Repeat the last substitution |
 | `:r filename`, `:read filename` | Read a UTF-8 file after the addressed line |
 | `:u`, `:undo`, `:red`, `:redo` | Undo/redo |
 | `:reg`, `:registers`, `:marks`, `:help` | Display registers, local marks, help location |
 
-Addresses: numbers (1-based), `.`, `$`, `%`, `first,last`; Visual selections
+Addresses: numbers (1-based), `.`, `$`, `%`, local marks (`'a`), search
+addresses (`/pattern/`, `?pattern?`), relative offsets (`.+2`, `$-1`),
+`first,last` and `first;last` (second address relative to the first). Visual selections
 provide the default range. Examples: `:2,5d`, `:%s/foo/bar/g`, `:'<,'>s/a/b/`,
 `:%normal I%<Esc>`. Writes of a partial line range are explicitly rejected.
 
@@ -134,14 +147,71 @@ Unsupported flags, including confirmation flag `c`, report an error without edit
 accepts 1–32. These options affect the current session; tabstop is shared by the
 underlying QCodeEdit component. Use the regular settings dialog for persistence.
 
+## Abbreviations and mappings
+
+Examples (enter in Normal mode):
+
+```vim
+:iabbrev teh the
+:iabbrev qq \qquad
+:ab btw by the way
+:inoreabbrev sig Best regards,<CR>Rodion
+:nnoremap <Leader>w :w<CR>
+:inoremap jj <Esc>
+```
+
+Type `teh` followed by a space to get `the `. `Esc` and `Ctrl+]` also expand an
+abbreviation; `Ctrl+]` adds no separator, while `Ctrl+c` leaves Insert without
+expansion. `Ctrl+v` quotes the next character to suppress expansion. Word
+boundaries follow the default letters/digits/underscore keyword definition.
+Full-id, end-id and non-id abbreviation forms are supported. Expansion is
+nonrecursive; a mapping can affect the RHS unless a noreabbrev variant is used.
+
+- `:ab[breviate]` defines/lists Insert, Replace and command-line abbreviations.
+- `:iabbrev`, `:cabbrev` restrict the mode; `:noreabbrev`, `:inoreabbrev`,
+  `:cnoreabbrev` suppress RHS mappings.
+- `:unabbreviate`, `:iunabbrev`, `:cunabbrev` remove an entry.
+- `:abclear`, `:iabclear`, `:cabclear` clear the selected modes.
+- Omit the RHS to list definitions (an optional LHS filters the list).
+- `:map`, `:nmap`, `:vmap`/`:xmap`, `:omap`, `:imap`, `:cmap`, `:map!` define
+  mappings. Matching `noremap`, `unmap` and `mapclear` mode variants are supported.
+- `<buffer>` makes an abbreviation or mapping local to this editor tab;
+  `<silent>` is accepted. `<expr>` and `<script>` are explicitly unsupported.
+
+RHS key notation: `<Esc>`, `<CR>`, `<Tab>`, `<BS>`, `<Del>`, arrows, Home/End,
+`<C-x>`, `<F1>`…`<F35>`, `<Space>`, `<lt>`, `<Bar>`, `<Bslash>`, `<Nop>`.
+`<Leader>` is a fixed backslash; setting `mapleader` is not implemented.
+Incomplete mappings wait up to one second. Pending input is resolved before
+saving, compilation, closing, focus changes or disabling Vim mode. Recursive mappings are limited to
+20 levels and 100,000 dispatched events. `:normal!` bypasses mappings;
+`:normal` applies them. Native shortcuts remain available unless a mapping
+explicitly claims their key sequence.
+
+Global definitions are shared across tabs and automatically saved to
+`vim-definitions.json` beside the active TeXstudio profile's settings. This is
+an additional convenience: stock Vim normally persists definitions through its
+configuration scripts. Buffer-local definitions are temporary. The JSON file
+contains text definitions only and never executes a configuration script on
+startup. Back it up with the rest of the portable `config` directory.
+
+`:source path/to/commands.vim` can import supported Ex commands manually.
+It does not implement Vimscript expressions, variables, functions, conditionals,
+autocommands, plugins or automatic `.vimrc`/`init.vim` loading.
+
 ## Limits
 
 This remains a TeXstudio-native Vim emulation, not an embedded Vim/Neovim engine.
-It does not execute Vimscript, load .vimrc/plugins, implement mappings, shell
+It does not execute Vimscript, load .vimrc/plugins, implement shell
 commands/filters, Vim splits/window commands, folds, quickfix, tags, cross-file
-marks, persistent undo/registers/macros, all Ex abbreviations or every Vim option.
-Soft-wrapped screen-line movement differs from Vim: viewport commands use logical
-lines. Block columns are text columns rather than tab-expanded virtual columns;
+marks, persistent undo/registers/macros, all Ex command abbreviations or every Vim option. Digraphs, Select/Virtual
+Replace modes, complete Insert completion, expression registers, formatting
+operators, substitution confirmation, full search highlighting and Vim regexes
+remain unsupported. `:e`, `:q` and window/buffer actions retain TeXstudio behavior.
+`:sort` defaults to the current line; use `:%sort` for the full document.
+Change history is limited to 100 positions in this tab. Offset `go` counts
+logical text characters rather than Vim file bytes for Unicode/CRLF files.
+The `g` screen motions use wrapped lines; H/M/L and viewport scrolling still
+use simplified logical-line calculations. Block columns are text columns rather than tab-expanded virtual columns;
 block Visual paste/replace have simplified semantics. Sentence/paragraph parsing
 uses punctuation and blank lines, not every Vim option. Counts on sentence and
 paragraph objects and some advanced motion variants may differ in edge cases.

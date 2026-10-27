@@ -1,0 +1,3158 @@
+[
+  {
+    "name": "ab-teh-48-32",
+    "expected": "EXPANDED ",
+    "line": 0,
+    "keys": "iteh \u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-48-46",
+    "expected": "EXPANDED.",
+    "line": 0,
+    "keys": "iteh.\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-48-27",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "iteh\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-48-29",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "iteh\u001d\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-48-3",
+    "expected": "teh",
+    "line": 0,
+    "keys": "iteh\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-48-13",
+    "expected": "EXPANDED\n",
+    "line": 1,
+    "keys": "iteh\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-32",
+    "expected": " EXPANDED ",
+    "line": 0,
+    "keys": "i teh \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-46",
+    "expected": " EXPANDED.",
+    "line": 0,
+    "keys": "i teh.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-27",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i teh\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-29",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i teh\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-3",
+    "expected": " teh",
+    "line": 0,
+    "keys": "i teh\u0003",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-32-13",
+    "expected": " EXPANDED\n",
+    "line": 1,
+    "keys": "i teh\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-32",
+    "expected": "ateh ",
+    "line": 0,
+    "keys": "iateh \u001b",
+    "column": 4,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-46",
+    "expected": "ateh.",
+    "line": 0,
+    "keys": "iateh.\u001b",
+    "column": 4,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-27",
+    "expected": "ateh",
+    "line": 0,
+    "keys": "iateh\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-29",
+    "expected": "ateh",
+    "line": 0,
+    "keys": "iateh\u001d\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-3",
+    "expected": "ateh",
+    "line": 0,
+    "keys": "iateh\u0003",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-97-13",
+    "expected": "ateh\n",
+    "line": 1,
+    "keys": "iateh\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-32",
+    "expected": "(EXPANDED ",
+    "line": 0,
+    "keys": "i(teh \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-46",
+    "expected": "(EXPANDED.",
+    "line": 0,
+    "keys": "i(teh.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-27",
+    "expected": "(EXPANDED",
+    "line": 0,
+    "keys": "i(teh\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-29",
+    "expected": "(EXPANDED",
+    "line": 0,
+    "keys": "i(teh\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-3",
+    "expected": "(teh",
+    "line": 0,
+    "keys": "i(teh\u0003",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-40-13",
+    "expected": "(EXPANDED\n",
+    "line": 1,
+    "keys": "i(teh\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-32",
+    "expected": ">EXPANDED ",
+    "line": 0,
+    "keys": "i>teh \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-46",
+    "expected": ">EXPANDED.",
+    "line": 0,
+    "keys": "i>teh.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-27",
+    "expected": ">EXPANDED",
+    "line": 0,
+    "keys": "i>teh\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-29",
+    "expected": ">EXPANDED",
+    "line": 0,
+    "keys": "i>teh\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-3",
+    "expected": ">teh",
+    "line": 0,
+    "keys": "i>teh\u0003",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-teh-62-13",
+    "expected": ">EXPANDED\n",
+    "line": 1,
+    "keys": "i>teh\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-32",
+    "expected": "EXPANDED ",
+    "line": 0,
+    "keys": "i#i \u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-46",
+    "expected": "EXPANDED.",
+    "line": 0,
+    "keys": "i#i.\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-27",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "i#i\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-29",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "i#i\u001d\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-3",
+    "expected": "#i",
+    "line": 0,
+    "keys": "i#i\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-48-13",
+    "expected": "EXPANDED\n",
+    "line": 1,
+    "keys": "i#i\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-32",
+    "expected": " EXPANDED ",
+    "line": 0,
+    "keys": "i #i \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-46",
+    "expected": " EXPANDED.",
+    "line": 0,
+    "keys": "i #i.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-27",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i #i\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-29",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i #i\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-3",
+    "expected": " #i",
+    "line": 0,
+    "keys": "i #i\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-32-13",
+    "expected": " EXPANDED\n",
+    "line": 1,
+    "keys": "i #i\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-32",
+    "expected": "aEXPANDED ",
+    "line": 0,
+    "keys": "ia#i \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-46",
+    "expected": "aEXPANDED.",
+    "line": 0,
+    "keys": "ia#i.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-27",
+    "expected": "aEXPANDED",
+    "line": 0,
+    "keys": "ia#i\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-29",
+    "expected": "aEXPANDED",
+    "line": 0,
+    "keys": "ia#i\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-3",
+    "expected": "a#i",
+    "line": 0,
+    "keys": "ia#i\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-97-13",
+    "expected": "aEXPANDED\n",
+    "line": 1,
+    "keys": "ia#i\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-32",
+    "expected": "(#i ",
+    "line": 0,
+    "keys": "i(#i \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-46",
+    "expected": "(#i.",
+    "line": 0,
+    "keys": "i(#i.\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-27",
+    "expected": "(#i",
+    "line": 0,
+    "keys": "i(#i\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-29",
+    "expected": "(#i",
+    "line": 0,
+    "keys": "i(#i\u001d\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-3",
+    "expected": "(#i",
+    "line": 0,
+    "keys": "i(#i\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-40-13",
+    "expected": "(#i\n",
+    "line": 1,
+    "keys": "i(#i\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-32",
+    "expected": ">#i ",
+    "line": 0,
+    "keys": "i>#i \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-46",
+    "expected": ">#i.",
+    "line": 0,
+    "keys": "i>#i.\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-27",
+    "expected": ">#i",
+    "line": 0,
+    "keys": "i>#i\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-29",
+    "expected": ">#i",
+    "line": 0,
+    "keys": "i>#i\u001d\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-3",
+    "expected": ">#i",
+    "line": 0,
+    "keys": "i>#i\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-#i-62-13",
+    "expected": ">#i\n",
+    "line": 1,
+    "keys": "i>#i\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev #i EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-32",
+    "expected": "EXPANDED ",
+    "line": 0,
+    "keys": "i;; \u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-46",
+    "expected": "EXPANDED.",
+    "line": 0,
+    "keys": "i;;.\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-27",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "i;;\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-29",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "i;;\u001d\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-3",
+    "expected": ";;",
+    "line": 0,
+    "keys": "i;;\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-48-13",
+    "expected": "EXPANDED\n",
+    "line": 1,
+    "keys": "i;;\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-32",
+    "expected": " EXPANDED ",
+    "line": 0,
+    "keys": "i ;; \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-46",
+    "expected": " EXPANDED.",
+    "line": 0,
+    "keys": "i ;;.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-27",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i ;;\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-29",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i ;;\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-3",
+    "expected": " ;;",
+    "line": 0,
+    "keys": "i ;;\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-32-13",
+    "expected": " EXPANDED\n",
+    "line": 1,
+    "keys": "i ;;\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-32",
+    "expected": "a;; ",
+    "line": 0,
+    "keys": "ia;; \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-46",
+    "expected": "a;;.",
+    "line": 0,
+    "keys": "ia;;.\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-27",
+    "expected": "a;;",
+    "line": 0,
+    "keys": "ia;;\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-29",
+    "expected": "a;;",
+    "line": 0,
+    "keys": "ia;;\u001d\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-3",
+    "expected": "a;;",
+    "line": 0,
+    "keys": "ia;;\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-97-13",
+    "expected": "a;;\n",
+    "line": 1,
+    "keys": "ia;;\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-32",
+    "expected": "(;; ",
+    "line": 0,
+    "keys": "i(;; \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-46",
+    "expected": "(;;.",
+    "line": 0,
+    "keys": "i(;;.\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-27",
+    "expected": "(;;",
+    "line": 0,
+    "keys": "i(;;\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-29",
+    "expected": "(;;",
+    "line": 0,
+    "keys": "i(;;\u001d\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-3",
+    "expected": "(;;",
+    "line": 0,
+    "keys": "i(;;\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-40-13",
+    "expected": "(;;\n",
+    "line": 1,
+    "keys": "i(;;\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-32",
+    "expected": ">;; ",
+    "line": 0,
+    "keys": "i>;; \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-46",
+    "expected": ">;;.",
+    "line": 0,
+    "keys": "i>;;.\u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-27",
+    "expected": ">;;",
+    "line": 0,
+    "keys": "i>;;\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-29",
+    "expected": ">;;",
+    "line": 0,
+    "keys": "i>;;\u001d\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-3",
+    "expected": ">;;",
+    "line": 0,
+    "keys": "i>;;\u0003",
+    "column": 2,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-;;-62-13",
+    "expected": ">;;\n",
+    "line": 1,
+    "keys": "i>;;\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev ;; EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-32",
+    "expected": "EXPANDED ",
+    "line": 0,
+    "keys": "ix \u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-46",
+    "expected": "EXPANDED.",
+    "line": 0,
+    "keys": "ix.\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-27",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "ix\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-29",
+    "expected": "EXPANDED",
+    "line": 0,
+    "keys": "ix\u001d\u001b",
+    "column": 7,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-3",
+    "expected": "x",
+    "line": 0,
+    "keys": "ix\u0003",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-48-13",
+    "expected": "EXPANDED\n",
+    "line": 1,
+    "keys": "ix\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-32",
+    "expected": " EXPANDED ",
+    "line": 0,
+    "keys": "i x \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-46",
+    "expected": " EXPANDED.",
+    "line": 0,
+    "keys": "i x.\u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-27",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i x\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-29",
+    "expected": " EXPANDED",
+    "line": 0,
+    "keys": "i x\u001d\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-3",
+    "expected": " x",
+    "line": 0,
+    "keys": "i x\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-32-13",
+    "expected": " EXPANDED\n",
+    "line": 1,
+    "keys": "i x\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-32",
+    "expected": "ax ",
+    "line": 0,
+    "keys": "iax \u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-46",
+    "expected": "ax.",
+    "line": 0,
+    "keys": "iax.\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-27",
+    "expected": "ax",
+    "line": 0,
+    "keys": "iax\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-29",
+    "expected": "ax",
+    "line": 0,
+    "keys": "iax\u001d\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-3",
+    "expected": "ax",
+    "line": 0,
+    "keys": "iax\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-97-13",
+    "expected": "ax\n",
+    "line": 1,
+    "keys": "iax\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-32",
+    "expected": "(x ",
+    "line": 0,
+    "keys": "i(x \u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-46",
+    "expected": "(x.",
+    "line": 0,
+    "keys": "i(x.\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-27",
+    "expected": "(x",
+    "line": 0,
+    "keys": "i(x\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-29",
+    "expected": "(x",
+    "line": 0,
+    "keys": "i(x\u001d\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-3",
+    "expected": "(x",
+    "line": 0,
+    "keys": "i(x\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-40-13",
+    "expected": "(x\n",
+    "line": 1,
+    "keys": "i(x\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-32",
+    "expected": ">x ",
+    "line": 0,
+    "keys": "i>x \u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-46",
+    "expected": ">x.",
+    "line": 0,
+    "keys": "i>x.\u001b",
+    "column": 2,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-27",
+    "expected": ">x",
+    "line": 0,
+    "keys": "i>x\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-29",
+    "expected": ">x",
+    "line": 0,
+    "keys": "i>x\u001d\u001b",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-3",
+    "expected": ">x",
+    "line": 0,
+    "keys": "i>x\u0003",
+    "column": 1,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "ab-x-62-13",
+    "expected": ">x\n",
+    "line": 1,
+    "keys": "i>x\r\u001b",
+    "column": 0,
+    "definitions": [
+      "iabbrev x EXPANDED"
+    ],
+    "text": "",
+    "pos": 0
+  },
+  {
+    "name": "insert-boundary-120",
+    "expected": "aEXPANDED teh",
+    "line": 0,
+    "keys": "iteh \u001b",
+    "column": 9,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "ateh",
+    "pos": 1
+  },
+  {
+    "name": "insert-boundary-121",
+    "expected": "teh ",
+    "line": 0,
+    "keys": "A \u001b",
+    "column": 3,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "teh",
+    "pos": 0
+  },
+  {
+    "name": "insert-boundary-122",
+    "expected": "aEXPANDEDbc",
+    "line": 0,
+    "keys": "iteh\u001b",
+    "column": 8,
+    "definitions": [
+      "iabbrev teh EXPANDED"
+    ],
+    "text": "abc",
+    "pos": 1
+  },
+  {
+    "name": "motion-123",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 0
+  },
+  {
+    "name": "motion-124",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 0
+  },
+  {
+    "name": "motion-125",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 0
+  },
+  {
+    "name": "motion-126",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 0
+  },
+  {
+    "name": "motion-127",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 1
+  },
+  {
+    "name": "motion-128",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 1
+  },
+  {
+    "name": "motion-129",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 1
+  },
+  {
+    "name": "motion-130",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 1
+  },
+  {
+    "name": "motion-131",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 2
+  },
+  {
+    "name": "motion-132",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 2
+  },
+  {
+    "name": "motion-133",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 2
+  },
+  {
+    "name": "motion-134",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 2
+  },
+  {
+    "name": "motion-135",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 3
+  },
+  {
+    "name": "motion-136",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 3
+  },
+  {
+    "name": "motion-137",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 3
+  },
+  {
+    "name": "motion-138",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 3
+  },
+  {
+    "name": "motion-139",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 4
+  },
+  {
+    "name": "motion-140",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 4
+  },
+  {
+    "name": "motion-141",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 4
+  },
+  {
+    "name": "motion-142",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 4
+  },
+  {
+    "name": "motion-143",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 5
+  },
+  {
+    "name": "motion-144",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 5
+  },
+  {
+    "name": "motion-145",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 5
+  },
+  {
+    "name": "motion-146",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 5
+  },
+  {
+    "name": "motion-147",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 6
+  },
+  {
+    "name": "motion-148",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 6
+  },
+  {
+    "name": "motion-149",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 6
+  },
+  {
+    "name": "motion-150",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 6
+  },
+  {
+    "name": "motion-151",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 7
+  },
+  {
+    "name": "motion-152",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 7
+  },
+  {
+    "name": "motion-153",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 7
+  },
+  {
+    "name": "motion-154",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 7
+  },
+  {
+    "name": "motion-155",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 8
+  },
+  {
+    "name": "motion-156",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 8
+  },
+  {
+    "name": "motion-157",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 8
+  },
+  {
+    "name": "motion-158",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 8
+  },
+  {
+    "name": "motion-159",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 9
+  },
+  {
+    "name": "motion-160",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 9
+  },
+  {
+    "name": "motion-161",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 9
+  },
+  {
+    "name": "motion-162",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 9
+  },
+  {
+    "name": "motion-163",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "ge",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 10
+  },
+  {
+    "name": "motion-164",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "gE",
+    "column": 6,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 10
+  },
+  {
+    "name": "motion-165",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "2ge",
+    "column": 3,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 10
+  },
+  {
+    "name": "motion-166",
+    "expected": "foo.bar baz",
+    "line": 0,
+    "keys": "g_",
+    "column": 10,
+    "definitions": [],
+    "text": "foo.bar baz",
+    "pos": 10
+  },
+  {
+    "name": "motion-167",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 0
+  },
+  {
+    "name": "motion-168",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 0
+  },
+  {
+    "name": "motion-169",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 0
+  },
+  {
+    "name": "motion-170",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 0
+  },
+  {
+    "name": "motion-171",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 1
+  },
+  {
+    "name": "motion-172",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 1
+  },
+  {
+    "name": "motion-173",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 1
+  },
+  {
+    "name": "motion-174",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 1
+  },
+  {
+    "name": "motion-175",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 2
+  },
+  {
+    "name": "motion-176",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 2
+  },
+  {
+    "name": "motion-177",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 2
+  },
+  {
+    "name": "motion-178",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 2
+  },
+  {
+    "name": "motion-179",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 3
+  },
+  {
+    "name": "motion-180",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 3
+  },
+  {
+    "name": "motion-181",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 3
+  },
+  {
+    "name": "motion-182",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 3
+  },
+  {
+    "name": "motion-183",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 4
+  },
+  {
+    "name": "motion-184",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 4
+  },
+  {
+    "name": "motion-185",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 4
+  },
+  {
+    "name": "motion-186",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 4
+  },
+  {
+    "name": "motion-187",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 5
+  },
+  {
+    "name": "motion-188",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 5
+  },
+  {
+    "name": "motion-189",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 5
+  },
+  {
+    "name": "motion-190",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 5
+  },
+  {
+    "name": "motion-191",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 6
+  },
+  {
+    "name": "motion-192",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 6
+  },
+  {
+    "name": "motion-193",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 6
+  },
+  {
+    "name": "motion-194",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 6
+  },
+  {
+    "name": "motion-195",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 7
+  },
+  {
+    "name": "motion-196",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 7
+  },
+  {
+    "name": "motion-197",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 7
+  },
+  {
+    "name": "motion-198",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 7
+  },
+  {
+    "name": "motion-199",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 8
+  },
+  {
+    "name": "motion-200",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 8
+  },
+  {
+    "name": "motion-201",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 8
+  },
+  {
+    "name": "motion-202",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 8
+  },
+  {
+    "name": "motion-203",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 9
+  },
+  {
+    "name": "motion-204",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 9
+  },
+  {
+    "name": "motion-205",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 9
+  },
+  {
+    "name": "motion-206",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 9
+  },
+  {
+    "name": "motion-207",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 10
+  },
+  {
+    "name": "motion-208",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 10
+  },
+  {
+    "name": "motion-209",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 10
+  },
+  {
+    "name": "motion-210",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 10
+  },
+  {
+    "name": "motion-211",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 11
+  },
+  {
+    "name": "motion-212",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 11
+  },
+  {
+    "name": "motion-213",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 11
+  },
+  {
+    "name": "motion-214",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 11
+  },
+  {
+    "name": "motion-215",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 12
+  },
+  {
+    "name": "motion-216",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 12
+  },
+  {
+    "name": "motion-217",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 12
+  },
+  {
+    "name": "motion-218",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 12
+  },
+  {
+    "name": "motion-219",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "ge",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 13
+  },
+  {
+    "name": "motion-220",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "gE",
+    "column": 7,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 13
+  },
+  {
+    "name": "motion-221",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 13
+  },
+  {
+    "name": "motion-222",
+    "expected": "one  two three",
+    "line": 0,
+    "keys": "g_",
+    "column": 13,
+    "definitions": [],
+    "text": "one  two three",
+    "pos": 13
+  },
+  {
+    "name": "motion-223",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 0
+  },
+  {
+    "name": "motion-224",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 0
+  },
+  {
+    "name": "motion-225",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 0
+  },
+  {
+    "name": "motion-226",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 0
+  },
+  {
+    "name": "motion-227",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 1
+  },
+  {
+    "name": "motion-228",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 1
+  },
+  {
+    "name": "motion-229",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 1
+  },
+  {
+    "name": "motion-230",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 1
+  },
+  {
+    "name": "motion-231",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 1,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 2
+  },
+  {
+    "name": "motion-232",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 2
+  },
+  {
+    "name": "motion-233",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 2
+  },
+  {
+    "name": "motion-234",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 2
+  },
+  {
+    "name": "motion-235",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 2,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 3
+  },
+  {
+    "name": "motion-236",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 3
+  },
+  {
+    "name": "motion-237",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 1,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 3
+  },
+  {
+    "name": "motion-238",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 3
+  },
+  {
+    "name": "motion-239",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 3,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 4
+  },
+  {
+    "name": "motion-240",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 4
+  },
+  {
+    "name": "motion-241",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 2,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 4
+  },
+  {
+    "name": "motion-242",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 4
+  },
+  {
+    "name": "motion-243",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "ge",
+    "column": 4,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 5
+  },
+  {
+    "name": "motion-244",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 5
+  },
+  {
+    "name": "motion-245",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "2ge",
+    "column": 3,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 5
+  },
+  {
+    "name": "motion-246",
+    "expected": "a,b.c!",
+    "line": 0,
+    "keys": "g_",
+    "column": 5,
+    "definitions": [],
+    "text": "a,b.c!",
+    "pos": 5
+  },
+  {
+    "name": "motion-247",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 0
+  },
+  {
+    "name": "motion-248",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 0
+  },
+  {
+    "name": "motion-249",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 0
+  },
+  {
+    "name": "motion-250",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 0
+  },
+  {
+    "name": "motion-251",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 1
+  },
+  {
+    "name": "motion-252",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 1
+  },
+  {
+    "name": "motion-253",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 1
+  },
+  {
+    "name": "motion-254",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 1
+  },
+  {
+    "name": "motion-255",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 2
+  },
+  {
+    "name": "motion-256",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 2
+  },
+  {
+    "name": "motion-257",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 2
+  },
+  {
+    "name": "motion-258",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 2
+  },
+  {
+    "name": "motion-259",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 3
+  },
+  {
+    "name": "motion-260",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 3
+  },
+  {
+    "name": "motion-261",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 3
+  },
+  {
+    "name": "motion-262",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 3
+  },
+  {
+    "name": "motion-263",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 4
+  },
+  {
+    "name": "motion-264",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 4
+  },
+  {
+    "name": "motion-265",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 4
+  },
+  {
+    "name": "motion-266",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 4
+  },
+  {
+    "name": "motion-267",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 5
+  },
+  {
+    "name": "motion-268",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 5
+  },
+  {
+    "name": "motion-269",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 5
+  },
+  {
+    "name": "motion-270",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 5
+  },
+  {
+    "name": "motion-271",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 6
+  },
+  {
+    "name": "motion-272",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 6
+  },
+  {
+    "name": "motion-273",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 6
+  },
+  {
+    "name": "motion-274",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 6
+  },
+  {
+    "name": "motion-275",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 7
+  },
+  {
+    "name": "motion-276",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 7
+  },
+  {
+    "name": "motion-277",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 7
+  },
+  {
+    "name": "motion-278",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 7
+  },
+  {
+    "name": "motion-279",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 8
+  },
+  {
+    "name": "motion-280",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 8
+  },
+  {
+    "name": "motion-281",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 0,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 8
+  },
+  {
+    "name": "motion-282",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 8
+  },
+  {
+    "name": "motion-283",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 9
+  },
+  {
+    "name": "motion-284",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 9
+  },
+  {
+    "name": "motion-285",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 9
+  },
+  {
+    "name": "motion-286",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 9
+  },
+  {
+    "name": "motion-287",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "ge",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 10
+  },
+  {
+    "name": "motion-288",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "gE",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 10
+  },
+  {
+    "name": "motion-289",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "2ge",
+    "column": 4,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 10
+  },
+  {
+    "name": "motion-290",
+    "expected": "  one two  ",
+    "line": 0,
+    "keys": "g_",
+    "column": 8,
+    "definitions": [],
+    "text": "  one two  ",
+    "pos": 10
+  }
+]

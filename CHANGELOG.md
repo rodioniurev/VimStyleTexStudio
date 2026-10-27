@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0-preview.1 — 2026-10-27
+
+- Add Insert/Replace and command-line abbreviations, mode-specific removal,
+  buffer-local definitions, literal input and explicit expansion.
+- Add recursive/nonrecursive mappings by mode, key notation, timeout and
+  bounded replay, with automatic profile storage for global definitions.
+- Add manual `:source` for supported Ex commands and distinguish `:normal!`.
+- Add Insert Ctrl+o/t/d/e/y/a, wrapped-line g motions, gi and change positions.
+- Correct ge/gE word classification, counted o/O and the default :sort range.
+- Add :copy/:move/:put, relative/mark/search addresses and semicolon ranges,
+  command-line register insertion and substitution repeat.
+- Add independent Vim reference fixtures and regressions for the new commands.
+- Preserve the Preview 2 save-during-input fix.
+
 ## 0.1.0-preview.2 — 2026-10-27
 
 - Fix automatic saving before Build & View while Vim Insert or Replace is active.
