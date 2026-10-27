@@ -1,5 +1,20 @@
 # Release verification
 
+## Preview 2 — 2026-10-27
+
+Windows 11 x64 / Qt 6.12.0: **13,374 passed, 0 failed, 0 skipped** locally.
+New cases cover saving inside Insert/Replace, continued input, nested change
+blocks, empty groups, clean-state notifications and undo/redo across a save.
+A separate integration check compiled a real LaTeX file with pdflatex before
+and after entering text without Escape, and extracted the resulting PDF text
+with pdftotext to confirm the change reached the PDF.
+
+GitHub Actions runs the updated Windows/Linux suite on the release commit;
+see the repository's VimStyle checks workflow for its current status.
+The dependency versions are unchanged from Preview 1.
+
+## Preview 1 — baseline
+
 Release: 0.1.0-preview.1, 2026-10-24. Based on upstream commit
 `fef67984b9fd5a0849c5e6b8625fe76df2d8b3c2`.
 
