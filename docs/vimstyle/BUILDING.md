@@ -83,3 +83,14 @@ python scripts/vimstyle/collect_dependency_sources.py C:/msys64 dist/windows-x64
 For network distribution, keep matching application and dependency sources
 available alongside the binary release and retain the license notices. Do not
 publish only a patch or a binary without its corresponding source access.
+
+
+The isolated main-window check verifies the Options toggle, shared toolbar action,
+checkbox synchronization and restart persistence. After building, run:
+
+```powershell
+python scripts/vimstyle/test_ui_windows.py C:/msys64/ucrt64 . build-windows
+```
+
+It uses a temporary profile and writes menu/toolbar screenshots into the build
+folder. Existing documents and the normal user profile are not loaded.

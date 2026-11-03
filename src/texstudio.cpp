@@ -1507,6 +1507,10 @@ void Texstudio::setupMenus()
 	//---options---
 	menu = newManagedMenu("main/options", tr("&Options"));
 	newManagedAction(menu, "config", tr("&Configure TeXstudio..."), SLOT(generalOptions()), 0, "configure")->setMenuRole(QAction::PreferencesRole);
+    QAction *vimModeAction = newManagedAction(menu, "vimMode", tr("Vim Editing"), SLOT(toggleVimMode()), 0, "vim-mode");
+    vimModeAction->setCheckable(true);
+    vimModeAction->setChecked(configManager.editorConfig->vimMode);
+    vimModeAction->setToolTip(tr("Enable or disable Vim editing in all documents"));
 
 	menu->addSeparator();
 	newManagedAction(menu, "loadProfile", tr("Load &Profile..."), SLOT(loadProfile()));
@@ -1570,6 +1574,22 @@ void Texstudio::setPreviewMode()
 	if (act) {
 		configManager.previewMode = act->data().value<ConfigManager::PreviewMode>();
 	}
+}
+
+void Texstudio::toggleVimMode()
+{
+    QAction *action = getManagedAction("main/options/vimMode");
+    if (!action) return;
+    const bool enabled = action->isChecked();
+    configManager.setOption("Editor/VimMode", enabled);
+    if (editors) for (LatexEditorView *view : editors->editors()) {
+        if (auto *binding = view->editor->findChild<VimInputBinding *>()) binding->setEnabled(enabled);
+    }
+    // Persist only this option; leave other open-session preferences alone.
+    QSettings *settings = configManager.newQSettings();
+    settings->setValue("texmaker/Editor/VimMode", enabled);
+    settings->sync();
+    delete settings;
 }
 /*! \brief set action for Menu Preview Display Mode
  */
@@ -4927,6 +4947,11 @@ void Texstudio::readSettings(bool reread)
     documents.settingsRead();
 
     configManager.editorConfig->settingsChanged();
+    if (QAction *action = findChild<QAction *>("main/options/vimMode"))
+        action->setChecked(configManager.editorConfig->vimMode);
+    if (editors) for (LatexEditorView *view : editors->editors()) {
+        if (auto *binding = view->editor->findChild<VimInputBinding *>()) binding->setEnabled(configManager.editorConfig->vimMode);
+    }
 }
 
 void Texstudio::saveSettings(const QString &configName)
@@ -7760,6 +7785,8 @@ void Texstudio::generalOptions()
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         configManager.editorConfig->settingsChanged();
+        if (QAction *action = findChild<QAction *>("main/options/vimMode"))
+            action->setChecked(configManager.editorConfig->vimMode);
 
         spellerManager.setDictPaths(configManager.parseDirList(configManager.spellDictDir));
         spellerManager.setDefaultSpeller(configManager.spellLanguage);

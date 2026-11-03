@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0-preview.2 — 2026-11-03
+
+- Add a checkable Options > Vim Editing command, available without opening settings.
+- Add a dedicated icon and expose the same command in toolbar customization.
+- Keep menu/button state synchronized with the Editor checkbox and loaded profiles.
+- Apply changes to all open and new documents and persist the toggle immediately.
+- Add main-window verification of toolbar customization, pending input and restart state.
+
 ## 0.2.0-preview.1 — 2026-10-27
 
 - Add Insert/Replace and command-line abbreviations, mode-specific removal,

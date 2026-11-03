@@ -65,3 +65,13 @@ Qt key events used by the editor tests; it does not alter input characters.
 
 These fixtures are a compatibility sample, not proof of complete Vim/Neovim
 compatibility. See VIM_MODE.md for unsupported language/runtime features.
+
+
+## 0.2.0-preview.2 menu and toolbar integration
+
+The isolated main-window check covers the managed Options action and its icon,
+all open/new tabs, committing pending Insert input when disabling Vim, the
+Editor checkbox, profile reload, adding the action through the real toolbar
+customizer, and restoring the toggle and toolbar after a process restart.
+It also checks the Russian action label. Windows CI runs this check alongside
+the existing 13,687 input-binding regression cases.

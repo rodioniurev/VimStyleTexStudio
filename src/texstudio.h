@@ -580,6 +580,7 @@ protected slots:
 	void helpAbout(); ///< open about dialog
 
 	void generalOptions(); ///< open config dialog
+    void toggleVimMode();
 	void setAutomaticRootDetection();
 	void setExplicitRootDocument(LatexDocument *doc);
 	void setCurrentDocAsExplicitRoot();

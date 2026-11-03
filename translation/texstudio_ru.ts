@@ -10364,6 +10364,14 @@ template to edit individual files.</source>
 <context>
     <name>Texstudio</name>
     <message>
+        <source>Vim Editing</source>
+        <translation>Режим Vim</translation>
+    </message>
+    <message>
+        <source>Enable or disable Vim editing in all documents</source>
+        <translation>Включить или отключить режим Vim во всех документах</translation>
+    </message>
+    <message>
         <location filename="../src/additionaltranslations.cpp" line="344"/>
         <source>Custom</source>
         <translation>Произвольный</translation>

@@ -1,6 +1,13 @@
 # Vim editing in TeXstudio
 
-Enable **Options → Configure TeXstudio → Editor → Enable Vim editing**.
+Toggle **Options → Vim Editing** to enable or disable Vim editing for all tabs.
+The check mark shows the current state. This command also has an icon and can be
+added to a toolbar through **Options → Configure TeXstudio → Toolbars**:
+choose the target toolbar, select **All menus → Options → Vim Editing**, and
+use the add-arrow button. The menu item and toolbar button share the same state.
+
+The checkbox at **Options → Configure TeXstudio → Editor → Enable Vim editing**
+controls the same setting.
 The saved setting is `Editor/VimMode`; it applies to existing and new tabs.
 The provided Windows package enables it in its own profile.
 

@@ -53,3 +53,6 @@ jobs:
       - name: Run Vim regression tests
         shell: pwsh
         run: python scripts/vimstyle/test_windows.py '${{ steps.msys2.outputs.msys2-location }}/ucrt64' . build-windows
+      - name: Check Vim menu and toolbar integration
+        shell: pwsh
+        run: python scripts/vimstyle/test_ui_windows.py '${{ steps.msys2.outputs.msys2-location }}/ucrt64' . build-windows
