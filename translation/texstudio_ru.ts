@@ -6558,6 +6558,24 @@ Do you want to overwrite it?</source>
 </context>
 <context>
     <name>PDFDocument</name>
+    <message><source>Print PDF...</source><translation>Печать PDF...</translation></message>
+    <message><source>Print PDF</source><translation>Печать PDF</translation></message>
+    <message><source>Print the compiled PDF document</source><translation>Печать скомпилированного PDF-документа</translation></message>
+    <message><source>Printing PDF...</source><translation>Печать PDF...</translation></message>
+    <message><source>Could not read PDF file:
+%1</source><translation>Не удалось прочитать PDF-файл:
+%1</translation></message>
+    <message><source>Enter the PDF password to print:</source><translation>Введите пароль PDF для печати:</translation></message>
+    <message><source>Could not load the PDF for printing. If compilation is running, try again when it finishes.</source><translation>Не удалось загрузить PDF для печати. Если идёт компиляция, повторите после её завершения.</translation></message>
+    <message><source>Printing is not permitted for this PDF.</source><translation>Печать этого PDF запрещена.</translation></message>
+    <message><source>No pages selected for printing.</source><translation>Не выбраны страницы для печати.</translation></message>
+    <message><source>Too many pages selected for printing.</source><translation>Выбрано слишком много страниц для печати.</translation></message>
+    <message><source>Could not start the print job.</source><translation>Не удалось начать печать.</translation></message>
+    <message><source>Could not create the next printed page.</source><translation>Не удалось создать следующую страницу для печати.</translation></message>
+    <message><source>Could not render PDF page %1.</source><translation>Не удалось подготовить страницу PDF %1 к печати.</translation></message>
+    <message><source>The printer has no printable page area.</source><translation>У принтера отсутствует доступная область печати.</translation></message>
+    <message><source>The printer reported an error.</source><translation>Принтер сообщил об ошибке.</translation></message>
+    <message><source>Could not finish the print job.</source><translation>Не удалось завершить печать.</translation></message>
     <message>
         <location filename="../src/pdfviewer/PDFDocument.cpp" line="3129"/>
         <source>Toolbar</source>

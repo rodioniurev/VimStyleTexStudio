@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0-preview.1 - 2026-11-03
+
+- Add Print PDF to the viewer context menu, toolbar and windowed File menu.
+- Use Qt's native print dialog with Poppler rendering instead of external commands.
+- Support page ranges/current page, page order, copies, grayscale and driver properties.
+- Snapshot the actual PDF before printing so recompilation does not invalidate the job.
+- Preserve page proportions and printable margins, with vector output where available.
+- Add isolated virtual-printer and viewer integration checks; no physical test jobs.
+- Document upstream discussions #201 and #3710 and keep source printing distinct.
+
 ## 0.2.0-preview.2 — 2026-11-03
 
 - Add a checkable Options > Vim Editing command, available without opening settings.

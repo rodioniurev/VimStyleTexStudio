@@ -458,6 +458,7 @@ public:
 	bool hasSyncData() { return scanner.isValid(); }
 
 	const QSharedPointer<Poppler::Document> &popplerDoc() const { return document; }
+    QAction *printAction() const { return action_Print; }
 
 	Q_INVOKABLE PDFWidget *widget() { return pdfWidget; }
 	const PDFWidget *widget() const { return pdfWidget; }
@@ -589,6 +590,8 @@ private:
 	QSynctex::TeXSyncPoint lastSyncPoint;
 
 	QSharedPointer<Poppler::Document> document;
+
+    bool m_printing = false;
 
 	PDFWidget	*pdfWidget;
 	PDFScrollArea	*scrollArea;

@@ -12,6 +12,7 @@ isEmpty(NO_POPPLER_PREVIEW) {
 
     HEADERS += \
         $$PWD/PDFDocument.h \
+        $$PWD/pdfprinting.h \
         $$PWD/PDFDocks.h \
         $$PWD/pdfrenderengine.h \
         $$PWD/pdfrendermanager.h \
@@ -22,6 +23,7 @@ isEmpty(NO_POPPLER_PREVIEW) {
 
     SOURCES += \
         $$PWD/PDFDocument.cpp \
+        $$PWD/pdfprinting.cpp \
         $$PWD/PDFDocks.cpp \
         $$PWD/pdfrenderengine.cpp \
         $$PWD/pdfrendermanager.cpp \

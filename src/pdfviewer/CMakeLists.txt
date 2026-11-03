@@ -17,6 +17,7 @@ if(POPPLER_FOUND)
         ${CMAKE_CURRENT_SOURCE_DIR}/PDFDocks.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfrenderengine.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfrendermanager.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/pdfprinting.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfannotationdlg.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfannotation.h
         ${CMAKE_CURRENT_SOURCE_DIR}/qsynctex.h
@@ -27,6 +28,7 @@ if(POPPLER_FOUND)
         ${CMAKE_CURRENT_SOURCE_DIR}/synctex/synctex_parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/synctex/synctex_parser_utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/PDFDocument.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/pdfprinting.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/PDFDocks.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfrenderengine.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/pdfrendermanager.cpp

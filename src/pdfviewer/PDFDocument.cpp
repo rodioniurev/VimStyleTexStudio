@@ -22,6 +22,9 @@
 #ifndef NO_POPPLER_PREVIEW
 #include "PDFDocument.h"
 #include "PDFDocks.h"
+#include "pdfprinting.h"
+#include <QScopeGuard>
+#include <memory>
 //#include "FindDialog.h"
 
 #include <QPaintEngine>
@@ -1659,6 +1662,10 @@ void PDFWidget::contextMenuEvent(QContextMenuEvent *event)
     }
 
 	PDFDocument *pdfDoc = getPDFDocument();
+    if (pdfDoc && pdfDoc->printAction()) {
+        menu.addAction(pdfDoc->printAction());
+        menu.addSeparator();
+    }
 	if (pdfDoc && pdfDoc->hasSyncData()) {
 		QAction *act = new QAction(tr("Go to Source"), &menu);
 		act->setData(QVariant(event->pos()));
@@ -3137,6 +3144,7 @@ void PDFDocument::setupToolBar(){
     toolBar->addAction(actionTypeset);
     separatorAfterTypeset = toolBar->addSeparator();
     toolBar->addAction(actionExternalViewer);
+    toolBar->addAction(action_Print);
     toolBar->addSeparator();
     toolBar->addAction(actionMagnify);
     toolBar->addAction(actionScroll);
@@ -3200,6 +3208,9 @@ void PDFDocument::setupMenus(bool embedded)
     configManager->newManagedAction(menuroot,menuHelp, "about", tr("About"), this,SIGNAL(triggeredAbout()), QList<QKeySequence>() );
     configManager->newManagedAction(menuroot,menuFile, "open", tr("&Open..."), this,SLOT(fileOpen()), QList<QKeySequence>(),"document-open" );
     configManager->newManagedAction(menuroot,menuFile, "split", tr("Split && Merge..."), this,SLOT(splitMergeTool()), QList<QKeySequence>() );
+    action_Print = configManager->newManagedAction(menuroot, menuFile, "print", tr("Print PDF..."), this, SLOT(printPDF()), QList<QKeySequence>() << QKeySequence::Print, "document-print");
+    action_Print->setToolTip(tr("Print the compiled PDF document"));
+    action_Print->setEnabled(!document.isNull() && document->okToPrint() && document->numPages() > 0);
     actionClose=configManager->newManagedAction(menuroot,menuFile, "close", tr("&Close"), this,SLOT(close()), QList<QKeySequence>()<< QKeySequence(Qt::CTRL | Qt::Key_W) ,"close");
 	menuFile->addSeparator();
     configManager->newManagedAction(menuroot,menuFile, "quit", tr("&Quit TeXstudio"), this,SIGNAL(triggeredQuit()), QList<QKeySequence>());
@@ -3705,6 +3716,7 @@ void PDFDocument::init(bool embedded)
 	//disable all action shortcuts when embedded
 	if (embedded) {
 		shortcutOnlyIfFocused(QList<QAction *>()
+		                      << action_Print
 		                      << actionNext_Page
 		                      << actionPrevious_Page
 		                      << actionLast_Page
@@ -3777,6 +3789,7 @@ void PDFDocument::sideBySide()
 
 void PDFDocument::closeEvent(QCloseEvent *event)
 {
+    if (m_printing) { event->ignore(); return; }
 	/*
 	 * Qt is buggy because it only restores the parent cursor shape if PDFWidget is the widget receiving the last mouse event
 	 * (qt_last_mouse_receiver). If we close the PDFWidget by pressing ESC while the zoom tool is the last mouse receiver,
@@ -3887,6 +3900,7 @@ retryNow:
 	QDateTime lastModified = fi.lastModified();
 	qint64 filesize = fi.size();
 	document = renderManager->loadDocument(curFile, error, password);
+    action_Print->setEnabled(!m_printing && document && !document->isLocked() && document->okToPrint() && document->numPages() > 0);
 	if (error == PDFRenderManager::FileIncomplete) {
 		QAction *retryAction = new QAction(tr("Retry"), this);
 		retryAction->setProperty("fillCache", fillCache);
@@ -4930,132 +4944,61 @@ void PDFDocument::doFindAgain()
 
 void PDFDocument::printPDF()
 {
-	if (document.isNull())
-		return;
+    if (m_printing || document.isNull()) return;
+    m_printing = true;
+    action_Print->setEnabled(false);
+    const auto restoreAction = qScopeGuard([this] {
+        m_printing = false;
+        action_Print->setEnabled(document && !document->isLocked() && document->okToPrint() && document->numPages() > 0);
+    });
+    // An independent in-memory snapshot avoids preview-renderer races and
+    // remains valid if compilation replaces the PDF while the dialog is open.
+    const QString sourceFile = curFile;
+    QFile file(sourceFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, tr("Print PDF"), tr("Could not read PDF file:\n%1").arg(file.errorString())); return;
+    }
+    const QByteArray data = file.readAll(); file.close();
+    std::unique_ptr<Poppler::Document> snapshot(Poppler::Document::loadFromData(data));
+    while (snapshot && snapshot->isLocked()) {
+        bool accepted = false;
+        const QString password = QInputDialog::getText(this, tr("PDF password"), tr("Enter the PDF password to print:"), QLineEdit::Password, QString(), &accepted);
+        if (!accepted) return;
+        std::unique_ptr<Poppler::Document> unlocked(Poppler::Document::loadFromData(data, QByteArray(), password.toUtf8()));
+        snapshot = std::move(unlocked);
+    }
+    if (!snapshot || snapshot->numPages() < 1) {
+        QMessageBox::warning(this, tr("Print PDF"), tr("Could not load the PDF for printing. If compilation is running, try again when it finishes.")); return;
+    }
+    if (!snapshot->okToPrint()) {
+        QMessageBox::warning(this, tr("Print PDF"), tr("Printing is not permitted for this PDF.")); return;
+    }
+    const int currentPage = qBound(0, pdfWidget->getPageIndex(), snapshot->numPages() - 1);
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(QFileInfo(sourceFile).fileName());
+    printer.setFullPage(false);
+    std::unique_ptr<Poppler::Page> first(snapshot->page(0));
+    if (first && first->pageSizeF().width() > first->pageSizeF().height()) printer.setPageOrientation(QPageLayout::Landscape);
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print PDF"));
+    dialog.setMinMax(1, snapshot->numPages());
+    dialog.setFromTo(1, snapshot->numPages());
+    dialog.setOption(QAbstractPrintDialog::PrintSelection, false);
+    dialog.setOption(QAbstractPrintDialog::PrintPageRange, true);
+    dialog.setOption(QAbstractPrintDialog::PrintCurrentPage, true);
+    dialog.setOption(QAbstractPrintDialog::PrintCollateCopies, true);
+    if (dialog.exec() != QDialog::Accepted) return;
 
-	QString command;
-	// texmaker 3.0.1 solution
-    int firstPage, lastPage;
-	QPrinter printer(QPrinter::HighResolution);
-	QPrintDialog printDlg(&printer, this);
-	printer.setDocName(fileName());
-	printDlg.setMinMax(1, pdfWidget->realNumPages());
-	printDlg.setFromTo(1, pdfWidget->realNumPages());
-	printDlg.setOption(QAbstractPrintDialog::PrintToFile, false);
-	printDlg.setOption(QAbstractPrintDialog::PrintSelection, false);
-	printDlg.setOption(QAbstractPrintDialog::PrintPageRange, true);
-	printDlg.setOption(QAbstractPrintDialog::PrintCollateCopies, false);
-
-	printDlg.setWindowTitle(tr("Print"));
-	if (printDlg.exec() != QDialog::Accepted) return;
-	switch (printDlg.printRange()) {
-	case QAbstractPrintDialog::PageRange:
-		firstPage = printDlg.fromPage();
-		lastPage = printDlg.toPage();
-		break;
-	default:
-		firstPage = 1;
-		lastPage = pdfWidget->realNumPages();
-	}
-
-	if (!printer.printerName().isEmpty()) {
-#if defined(Q_OS_WIN32) && QT_VERSION_MAJOR<6
-		QString paper;
-		switch (printer.paperSize()) {
-		case QPageSize::A0:
-			paper = "a0";
-			break;
-		case QPageSize::A1:
-			paper = "a1";
-			break;
-		case QPageSize::A2:
-			paper = "a2";
-			break;
-		case QPageSize::A3:
-			paper = "a3";
-			break;
-		case QPageSize::A4:
-			paper = "a4";
-			break;
-		case QPageSize::A5:
-			paper = "a5";
-			break;
-		case QPageSize::A6:
-			paper = "a6";
-			break;
-		case QPageSize::B0:
-			paper = "isob0";
-			break;
-		case QPageSize::B1:
-			paper = "isob1";
-			break;
-		case QPageSize::B2:
-			paper = "isob2";
-			break;
-		case QPageSize::B3:
-			paper = "isob3";
-			break;
-		case QPageSize::B4:
-			paper = "isob4";
-			break;
-		case QPageSize::B5:
-			paper = "isob5";
-			break;
-		case QPageSize::B6:
-			paper = "isob6";
-			break;
-		case QPageSize::Letter:
-			paper = "letter";
-			break;
-		case QPageSize::Ledger:
-			paper = "ledger";
-			break;
-		case QPageSize::Legal:
-			paper = "legal";
-			break;
-		default:
-			paper = "a4";
-		}
-
-		QStringList args;
-		args << "txs:///gs";
-		args << "-sDEVICE=mswinpr2";
-		args << QString("-sOutputFile=\"\%printer\%%1\"").arg(printer.printerName().replace(" ", "_"));
-		args << "-dBATCH";
-		args << "-dNOPAUSE";
-		args << "-dQUIET";
-		args << "-dNoCancel";
-		args << "-sPAPERSIZE=" + paper;
-		args << "-dFirstPage=" + QString::number(firstPage);
-		args << "-dLastPage=" + QString::number(lastPage);
-#else
-		QStringList args;
-		args << "lp";
-		args << QString("-d %1").arg(printer.printerName().replace(" ", "_"));
-		//args << QString("-n %1").arg(printer.numCopies());
-		//  args << QString("-t \"%1\"").arg(printer.docName());
-		args << QString("-P %1-%2").arg(firstPage).arg(lastPage);
-		switch (printer.duplex()) {
-		case QPrinter::DuplexNone:
-			args << "-o sides=one-sided";
-			break;
-		case QPrinter::DuplexShortSide:
-			args << "-o sides=two-sided-short-edge";
-			break;
-		case QPrinter::DuplexLongSide:
-			args << "-o sides=two-sided-long-edge";
-			break;
-		default:
-			break;
-		}
-		args << "--";
-#endif
-		args << "\"?am.pdf\"";
-		command = args.join(" ");
-	} else return;
-
-    for (int i = 0; i < printer.copyCount(); i++)
-        emit runCommandAsync(command, masterFile, masterFile, 0);
+    QProgressDialog progress(tr("Printing PDF..."), tr("Cancel"), 0, snapshot->numPages(), this);
+    progress.setWindowModality(Qt::ApplicationModal);
+    progress.setMinimumDuration(500);
+    QString error;
+    const auto result = PdfPrinting::print(*snapshot, printer, currentPage, error, [&](int done, int total) {
+        progress.setMaximum(total); progress.setValue(done);
+        return !progress.wasCanceled();
+    });
+    progress.close();
+    if (result == PdfPrinting::Result::Failed) QMessageBox::warning(this, tr("Print PDF"), error);
 }
 
 void PDFDocument::setAutoHideToolbars(bool enabled)

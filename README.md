@@ -14,6 +14,9 @@ The 0.2 preview adds persistent abbreviations (`:ab`, `:iabbrev`, `:cabbrev`),
 mode-specific mappings, manual `:source`, additional Insert commands and wrapped
 line motions. See [VIM_MODE.md](VIM_MODE.md) for examples and explicit limits.
 
+Compiled PDFs can be printed directly from the viewer's printer button or
+**right-click > Print PDF...**. See [PDF printing](docs/vimstyle/PDF_PRINTING.md).
+
 ## Start on Windows
 
 1. Download the `windows-x64.zip` asset from Releases and extract the entire ZIP
