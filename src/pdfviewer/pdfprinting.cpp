@@ -3,7 +3,6 @@
 #include "pdfprinting.h"
 #include <QCoreApplication>
 #include <QPainter>
-#include <QPicture>
 #include <QPrinter>
 #include <QVector>
 #include <algorithm>
@@ -49,13 +48,17 @@ PdfPrinting::Result PdfPrinting::print(Poppler::Document &document, QPrinter &pr
     if (progress && !progress(0, total)) return Result::Cancelled;
 
     const bool highResolution = document.okToPrintHighRes();
-    const bool vectorOutput = highResolution && Poppler::Document::availableRenderBackends().contains(Poppler::Document::QPainterBackend);
-    document.setRenderBackend(vectorOutput ? Poppler::Document::QPainterBackend : Poppler::Document::SplashBackend);
+    // Render the whole page, including embedded fonts, before passing it to
+    // the printer. QPainter/QPicture font replay can distort Type 1 glyphs
+    // or omit them on native printer drivers while graphics still print.
+    document.setRenderBackend(Poppler::Document::SplashBackend);
     document.setRenderHint(Poppler::Document::Antialiasing, true);
     document.setRenderHint(Poppler::Document::TextAntialiasing, true);
     printer.setFullPage(false);
     QPainter painter;
     if (!painter.begin(&printer)) { error = message("Could not start the print job."); return Result::Failed; }
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.setRenderHint(QPainter::LosslessImageRendering);
     auto fail = [&](const QString &reason) {
         error = reason; printer.abort(); painter.end(); return Result::Failed;
     };
@@ -75,27 +78,13 @@ PdfPrinting::Result PdfPrinting::print(Poppler::Document &document, QPrinter &pr
         painter.save();
         painter.translate((area.width() - size.width() * scale) / 2, (area.height() - size.height() * scale) / 2);
         painter.scale(scale, scale);
-        bool rendered = false;
-        if (vectorOutput) {
-            // Poppler replaces its painter's world transform. Record first so
-            // fitting/centering remains under the print painter's control.
-            QPicture picture;
-            QPainter recording(&picture);
-            rendered = page->renderToPainter(&recording, 72, 72);
-            recording.end();
-            if (rendered) {
-                painter.scale(qreal(picture.logicalDpiX()) / printer.logicalDpiX(),
-                              qreal(picture.logicalDpiY()) / printer.logicalDpiY());
-                painter.drawPicture(QPointF(), picture);
-            }
-        }
-        else {
-            // Limit fallback memory to one 24-megapixel page, including oversized PDFs.
-            const double dpi = qMin(double(highResolution ? qMin(600, qMax(300, printer.resolution())) : 150),
-                                    72.0 * std::sqrt(24000000.0 / (size.width() * size.height())));
-            const QImage image = page->renderToImage(dpi, dpi);
-            if (!image.isNull()) { painter.drawImage(QRectF(QPointF(), size), image); rendered = true; }
-        }
+        // Bound memory to one 24-megapixel page. Normal pages use 300-600 DPI,
+        // reduced where necessary for oversized pages or PDF permissions.
+        const double dpi = qMin(double(highResolution ? qMin(600, qMax(300, printer.resolution())) : 150),
+                                72.0 * std::sqrt(24000000.0 / (size.width() * size.height())));
+        const QImage image = page->renderToImage(dpi, dpi);
+        const bool rendered = !image.isNull();
+        if (rendered) painter.drawImage(QRectF(QPointF(), size), image);
         painter.restore();
         if (!rendered) return fail(message("Could not render PDF page %1.").arg(pageNumber + 1));
         if (printer.printerState() == QPrinter::Error) return fail(message("The printer reported an error."));

@@ -20,6 +20,53 @@
 #include <memory>
 #define CHECK(value) do { if (!(value)) { QTextStream(stderr) << "FAIL line " << __LINE__ << ": " << #value << '\n'; return 1; } } while (false)
 static const QColor colors[] = {Qt::red, Qt::green, Qt::blue, Qt::cyan};
+static bool checkTextPrinting(const QString &source, const QString &directory, int dpi)
+{
+    std::unique_ptr<Poppler::Document> input(Poppler::Document::load(source));
+    if (!input || input->numPages() < 1) return false;
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(directory + "/text-output.pdf");
+    printer.setPageSize(QPageSize(QPageSize::A4)); printer.setResolution(dpi);
+    std::unique_ptr<Poppler::Page> original(input->page(0));
+    const QSizeF size = original->pageSizeF();
+    if (size.width() > size.height()) printer.setPageOrientation(QPageLayout::Landscape);
+    printer.setPrintRange(QPrinter::CurrentPage);
+    QString error;
+    if (PdfPrinting::print(*input, printer, 0, error) != PdfPrinting::Result::Printed) return false;
+    input->setRenderBackend(Poppler::Document::SplashBackend);
+    const QImage reference = original->renderToImage(288, 288);
+    std::unique_ptr<Poppler::Document> output(Poppler::Document::load(printer.outputFileName()));
+    if (!output || reference.isNull()) return false;
+    output->setRenderBackend(Poppler::Document::SplashBackend);
+    std::unique_ptr<Poppler::Page> printed(output->page(0));
+    const QImage actual = printed->renderToImage(144, 144);
+    QImage expected(actual.size(), QImage::Format_RGB32); expected.fill(Qt::white);
+    const QRectF points = printer.pageLayout().paintRectPoints();
+    const QRectF area(points.topLeft()*2, points.size()*2);
+    const qreal scale = qMin(area.width()/size.width(), area.height()/size.height());
+    const QSizeF fitted = size * scale;
+    QPainter painter(&expected); painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawImage(QRectF(area.center() - QPointF(fitted.width()/2, fitted.height()/2), fitted), reference);
+    painter.end();
+    int ink = 0, matched = 0, actualInk = 0;
+    for (int y=2; y<expected.height()-2; ++y) for (int x=2; x<expected.width()-2; ++x) {
+        const QColor printedColor = actual.pixelColor(x,y);
+        if (printedColor.red()<160 && printedColor.green()<160 && printedColor.blue()<160) ++actualInk;
+        const QColor color = expected.pixelColor(x,y);
+        if (color.red() >= 160 || color.green() >= 160 || color.blue() >= 160) continue;
+        ++ink;
+        bool found = false;
+        for (int dy=-2; dy<=2 && !found; ++dy) for (int dx=-2; dx<=2 && !found; ++dx) {
+            const QColor pixel = actual.pixelColor(x+dx,y+dy);
+            found = pixel.red()<170 && pixel.green()<170 && pixel.blue()<170;
+        }
+        if (found) ++matched;
+    }
+    actual.save(directory + "/text-printed.png"); expected.save(directory + "/text-reference.png");
+    QTextStream(stdout) << "Text ink match at " << dpi << " DPI: " << matched << '/' << ink << ", output ink: " << actualInk << '\n';
+    return ink > 100 && matched >= ink * 0.95 && actualInk > ink * 0.75 && actualInk < ink * 1.25;
+}
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv); CHECK(argc >= 4);
@@ -90,6 +137,10 @@ int main(int argc, char **argv)
         CHECK(PdfPrinting::print(*input, printer, 0, error) == PdfPrinting::Result::Failed);
     }
     QTextStream(stdout) << "PASS: PDF printing preserves all/range/current/reverse pages, collated/uncollated copies, color/grayscale, cancellation and error handling.\n";
+    CHECK(argc >= 5);
+    CHECK(checkTextPrinting(QString::fromLocal8Bit(argv[4]), QString::fromLocal8Bit(argv[2]), 300));
+    CHECK(checkTextPrinting(QString::fromLocal8Bit(argv[4]), QString::fromLocal8Bit(argv[2]), 1200));
+    QTextStream(stdout) << "PASS: printed text and mathematics match the Splash reference at 300 and 1200 DPI.\n";
     {
         PDFDocument viewer(config->pdfDocumentConfig, true);
         QAction *action = viewer.printAction(); CHECK(action && !action->isEnabled());

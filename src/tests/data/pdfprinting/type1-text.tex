@@ -1,0 +1,17 @@
+% SPDX-License-Identifier: GPL-3.0-only
+% Copyright (C) 2026 rodioniurev
+% Regression fixture: embedded Type 1 fonts, no graphics.
+% Regenerate with pdflatex -interaction=nonstopmode -halt-on-error type1-text.tex
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\pagestyle{empty}
+\begin{document}
+\noindent PRINT TEXT MUST REMAIN VISIBLE.\\
+Regular text with embedded Computer Modern fonts.\\
+Кириллица: проверка печати текста, цифры 0123456789.\\
+\textbf{Bold text: ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789.}\\
+\textit{Italic text: abcdefghijklmnopqrstuvwxyz.}\\
+Mathematics: $E=mc^2$, $\alpha+\beta=\gamma$, $\sum_{n=1}^{10} n=55$.
+\end{document}

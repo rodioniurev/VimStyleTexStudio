@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0-preview.2 - 2026-11-03
+
+- Fix missing or distorted PDF text when printing embedded Type 1 fonts.
+- Render complete pages through Splash before sending images to the printer,
+  bypassing native printer font handling and QPicture font replay.
+- Keep page ranges, copies, grayscale, margins and cancellation behavior.
+- Add a LaTeX Type 1 font fixture and compare visible text against a reference,
+  covering Cyrillic, mathematics, missing glyphs and excessive ink.
+- Document raster output quality and memory limits.
+
 ## 0.3.0-preview.1 - 2026-11-03
 
 - Add Print PDF to the viewer context menu, toolbar and windowed File menu.

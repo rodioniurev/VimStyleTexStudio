@@ -18,8 +18,12 @@ the dialog opens. Recompilation can replace that file without invalidating the
 print job. Printing uses Qt PrintSupport and the bundled Poppler library; it
 does not require Ghostscript or an external PDF application.
 
-Vector output is used when the Poppler build and PDF permissions allow it.
-Otherwise a bounded raster fallback is used. Password-protected PDFs may ask
+Pages are rendered with Poppler's Splash backend before they reach the printer,
+so embedded Type 1 fonts do not depend on native printer font support. Output
+is rasterized at 300-600 DPI, capped at 24 megapixels per page (about 500 DPI
+on A4). Oversized pages use lower resolution to stay within this limit; PDFs
+that allow only low-resolution printing are limited to 150 DPI. Printed PDF
+copies contain page images rather than selectable text. Password-protected PDFs may ask
 for the password again; printing permissions are respected. Errors are shown
 in the application, and long jobs can be cancelled between pages.
 
@@ -47,7 +51,14 @@ python scripts/vimstyle/test_pdf_print_windows.py C:/msys64/ucrt64 . build-windo
 The isolated check generates a four-page PDF with colored markers and mixed
 orientations, prints to temporary PDF files, and inspects the rendered output.
 It covers page selection/order, copies, grayscale, cancellation and failures.
+A separate LaTeX fixture with embedded Type 1 fonts checks the visible text,
+Cyrillic and mathematics against a Splash reference at 300 and 1200 printer DPI,
+including missing glyphs and excess ink from distorted font rendering.
 It also checks embedded/windowed viewer menus, toolbar integration, shortcut
 scope and the Russian label. Physical printers are never used. Native Windows
 dialogs cannot be displayed by the offscreen test platform; their entry point
 and state restoration are checked there.
+
+For a local document check, set `TXS_PRINT_TEST_PDF` to an existing PDF before
+running the script. Its contents and screenshots must remain local and must
+not be included in published test artifacts.

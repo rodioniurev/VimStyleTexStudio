@@ -37,4 +37,5 @@ subprocess.run([str(sdk / 'bin/g++.exe'), '-mconsole', '-o', str(binary), '@pdf_
 import tempfile
 with tempfile.TemporaryDirectory(prefix='pdf-print-check-') as profile:
     Path(profile, 'texstudio.ini').write_text('[texmaker]\nGrammar\\Language Tool Autorun=false\n', encoding='utf-8')
-    subprocess.run([str(binary), profile, str(build), str(source / 'translation/texstudio_ru.qm')], cwd=build, env=env, check=True, timeout=90)
+    fixture = Path(os.environ.get('TXS_PRINT_TEST_PDF', source / 'src/tests/data/pdfprinting/type1-text.pdf')).resolve()
+    subprocess.run([str(binary), profile, str(build), str(source / 'translation/texstudio_ru.qm'), str(fixture)], cwd=build, env=env, check=True, timeout=180)
