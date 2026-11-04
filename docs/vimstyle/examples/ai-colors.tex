@@ -1,0 +1,21 @@
+% SPDX-License-Identifier: GPL-3.0-only
+% Copyright (C) 2026 rodioniurev
+% Try Wizards > AI Editing > Choose and apply colors, whole-document scope.
+\documentclass[12pt]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{xcolor}
+\definecolor{pagebg}{HTML}{FFFFFF}
+\definecolor{bodytext}{HTML}{777777}
+\definecolor{accent}{HTML}{FF00FF}
+\pagecolor{pagebg}
+\color{bodytext}
+\begin{document}
+\section*{\textcolor{accent}{A readable palette}}
+This paragraph should remain comfortable to read at normal print size.
+Choose a coherent palette with strong contrast and restrained accents.
+
+\subsection*{\textcolor{accent}{Key result}}
+The formula must stay unchanged: $E=mc^2$.
+
+\noindent\colorbox{accent}{\textcolor{white}{A highlighted label}}
+\end{document}

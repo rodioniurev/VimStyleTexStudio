@@ -501,6 +501,9 @@ protected slots:
 	void quickGraphics(const QString &graphicsFile = QString()); ///< start quick graphics wizard
 	void quickMath(); ///< start quick math wizard
     void aiChat(const QString queryText=""); ///< start ai chat assistant
+    void aiEdit();
+    void aiEditColors();
+    void aiEditComposition();
 
 	bool checkProgramPermission(const QString &program, const QString &cmdId, LatexDocument *master);
 	void runInternalPdfViewer(const QFileInfo &master, const QString &options);

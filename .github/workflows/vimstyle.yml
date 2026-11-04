@@ -59,3 +59,13 @@ jobs:
       - name: Check native PDF printing
         shell: pwsh
         run: python scripts/vimstyle/test_pdf_print_windows.py '${{ steps.msys2.outputs.msys2-location }}/ucrt64' . build-windows
+      - name: Check reviewed AI editing with mock providers
+        shell: pwsh
+        run: |
+          $env:TXS_TEST_RUSSIAN_QM = (Resolve-Path translation/texstudio_ru.qm).Path
+          python scripts/vimstyle/test_ai_edit_windows.py '${{ steps.msys2.outputs.msys2-location }}/ucrt64' . build-windows
+      - name: Check Copilot bridge contract without network requests
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check github-copilot-sdk==1.0.28
+          python scripts/vimstyle/test_copilot_bridge.py

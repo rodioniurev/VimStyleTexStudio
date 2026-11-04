@@ -21,6 +21,7 @@
 #include "texstudio.h"
 #include "latexeditorview.h"
 #include "viminputbinding.h"
+#include "aieditdialog.h"
 
 #include "smallUsefulFunctions.h"
 
@@ -1331,6 +1332,11 @@ void Texstudio::setupMenus()
 
     menu->addSeparator();
     newManagedAction(menu, "aichat", tr("AI &Chat..."), SLOT(aiChat()));
+    submenu = newManagedMenu(menu, "aiedit", tr("AI Editing"));
+    submenu->menuAction()->setObjectName("main/wizards/aiedit");
+    newManagedAction(submenu, "custom", tr("Edit document or selection..."), SLOT(aiEdit()), QKeySequence(), "configure");
+    newManagedAction(submenu, "colors", tr("Choose and apply colors..."), SLOT(aiEditColors()));
+    newManagedAction(submenu, "composition", tr("Compose Beamer slide..."), SLOT(aiEditComposition()));
 
 	menu->addSeparator();
 	newManagedAction(menu, "tabular", tr("Quick &Tabular..."), SLOT(quickTabular()));
@@ -1558,6 +1564,7 @@ void Texstudio::setupMenus()
 		baseContextActions << getManagedActions(QStringList() << "main/edit2/pasteAsLatex" << "main/edit2/convertTo" << "main/edit/selection/selectAll");
 		baseContextActions << sep;
 		baseContextActions << getManagedActions(QStringList() << "previewLatex" << "removePreviewLatex", "main/edit2/");
+        baseContextActions << getManagedActions(QStringList() << "main/wizards/aiedit");
 		LatexEditorView::setBaseActions(baseContextActions);
 	}
 
@@ -6029,6 +6036,25 @@ void Texstudio::aiChat(const QString queryText)
         // in case of preset query, execute query
         aiChatDlg->executeQuery();
     }
+}
+
+void Texstudio::aiEdit()
+{
+    if (!currentEditor()) return;
+    AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 0, this);
+    dialog.exec();
+}
+void Texstudio::aiEditColors()
+{
+    if (!currentEditor()) return;
+    AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 1, this);
+    dialog.exec();
+}
+void Texstudio::aiEditComposition()
+{
+    if (!currentEditor()) return;
+    AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 2, this);
+    dialog.exec();
 }
 
 void Texstudio::quickTabbing()

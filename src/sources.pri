@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/viminputbinding.h \
     $$PWD/aboutdialog.h \
     $$PWD/aichatassistant.h \
+    $$PWD/aieditdialog.h \
     $$PWD/aiquerystoragemodel.h \
     $$PWD/arraydialog.h \
     $$PWD/bibtexdialog.h \
@@ -119,6 +120,7 @@ SOURCES += \
     $$PWD/aboutdialog.cpp \
     $$PWD/additionaltranslations.cpp \
     $$PWD/aichatassistant.cpp \
+    $$PWD/aieditdialog.cpp \
     $$PWD/aiquerystoragemodel.cpp \
     $$PWD/arraydialog.cpp \
     $$PWD/bibtexdialog.cpp \

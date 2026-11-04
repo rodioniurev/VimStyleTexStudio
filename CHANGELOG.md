@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased - AI editing preview
+
+- Add review-based AI editing for a selection or the current LaTeX document.
+- Add color-palette and Beamer composition task presets with editable instructions.
+- Support local Ollama, OpenAI API, Claude Messages, compatible servers and the
+  official GitHub Copilot SDK bridge with tools and project discovery disabled.
+- Discover provider models, retain keys only in session memory and handle
+  cancellation, truncation, errors and source changes before applying.
+- Apply replacements explicitly in one undo step; add Russian UI translations.
+- Add mock provider, SDK contract and optional live local-model/LaTeX checks.
+
 ## 0.3.0-preview.2 - 2026-11-03
 
 - Fix missing or distorted PDF text when printing embedded Type 1 fonts.
