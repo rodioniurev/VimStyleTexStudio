@@ -3461,6 +3461,8 @@ options again to only view the most common settings.</source>
         <source>Basic Key Mapping</source>
         <translation>Основная раскладка клавиш</translation>
     </message>
+<message><source>AI Editing</source><translation>ИИ-редактирование</translation></message>
+<message><source>Could not save AI editing settings.</source><translation>Не удалось сохранить настройки ИИ-редактирования.</translation></message>
 </context>
 <context>
     <name>ConfigManager</name>
@@ -13220,6 +13222,10 @@ to join: teamtype join %2</source>
         <comment>General warning dialog</comment>
         <translation>Не предупреждать снова.</translation>
     </message>
+<message><source>Edit with AI...</source><translation>Изменить с ИИ...</translation></message>
+<message><source>AI Editing</source><translation>ИИ-редактирование</translation></message>
+<message><source>Choose and apply colors...</source><translation>Подобрать и применить цвета...</translation></message>
+<message><source>Compose Beamer slide...</source><translation>Композиция слайда Beamer...</translation></message>
 </context>
 <context>
     <name>TextAnalysisDialog</name>
@@ -14374,5 +14380,94 @@ Do you trust this script?</source>
         <source>Target folder not empty.</source>
         <translation>Целевая папка не пуста.</translation>
     </message>
+</context>
+<context>
+<name>AIEditDialog</name>
+<message><source>Edit with AI</source><translation>Изменить с ИИ</translation></message>
+<message><source>Ollama (local)</source><translation>Ollama (локальная модель)</translation></message>
+<message><source>OpenAI API</source><translation>OpenAI API</translation></message>
+<message><source>Anthropic Claude</source><translation>Anthropic Claude</translation></message>
+<message><source>OpenAI-compatible / LM Studio</source><translation>Совместимый с OpenAI / LM Studio</translation></message>
+<message><source>GitHub Copilot (SDK)</source><translation>GitHub Copilot (SDK)</translation></message>
+<message><source>API key or provider environment variable</source><translation>Ключ API или переменная окружения провайдера</translation></message>
+<message><source>Remember key securely for this Windows account</source><translation>Сохранить ключ с защитой для этой учётной записи Windows</translation></message>
+<message><source>Load available models or enter a model ID</source><translation>Загрузите список моделей или введите идентификатор</translation></message>
+<message><source>Check connection / load models</source><translation>Проверить подключение / модели</translation></message>
+<message><source>Provider:</source><translation>Провайдер:</translation></message>
+<message><source>Endpoint / Python executable:</source><translation>Адрес API / исполняемый файл Python:</translation></message>
+<message><source>API key / GitHub token:</source><translation>Ключ API / токен GitHub:</translation></message>
+<message><source>Model:</source><translation>Модель:</translation></message>
+<message><source>Output token limit:</source><translation>Лимит токенов ответа:</translation></message>
+<message><source>Ollama context tokens:</source><translation>Токены контекста Ollama:</translation></message>
+<message><source>Selected text</source><translation>Выделенный текст</translation></message>
+<message><source>Whole current document</source><translation>Весь текущий документ</translation></message>
+<message><source>Custom instruction</source><translation>Своя инструкция</translation></message>
+<message><source>Readable color palette</source><translation>Удобная для чтения цветовая гамма</translation></message>
+<message><source>Beamer: composition A → B → C</source><translation>Beamer: композиция А → Б → В</translation></message>
+<message><source>What should change in the selected text?</source><translation>Что изменить в выделенном тексте?</translation></message>
+<message><source>What should change in this document?</source><translation>Что изменить в этом документе?</translation></message>
+<message><source>AI settings...</source><translation>Настройки ИИ...</translation></message>
+<message><source>Describe the change in your own words. Ctrl+Enter sends the request.</source><translation>Напишите своими словами, что нужно изменить. Ctrl+Enter — отправить запрос.</translation></message>
+<message><source>Allow related changes elsewhere in this document</source><translation>Разрешить связанные изменения в других частях этого документа</translation></message>
+<message><source>The whole current document is sent as context. All proposed changes are reviewed before application.</source><translation>Весь текущий документ отправляется как контекст. Все предлагаемые изменения показываются перед применением.</translation></message>
+<message><source>Original</source><translation>Исходный текст</translation></message>
+<message><source>Proposed replacement (editable)</source><translation>Предлагаемая замена (можно изменить)</translation></message>
+<message><source>Review changes</source><translation>Проверка изменений</translation></message>
+<message><source>Provider response</source><translation>Ответ провайдера</translation></message>
+<message><source>Settings are saved when you press OK in Configuration.</source><translation>Настройки сохраняются по кнопке ОК в окне конфигурации.</translation></message>
+<message><source>Describe the change, then send. Nothing is applied automatically.</source><translation>Опишите изменение и отправьте запрос. Правки не применяются автоматически.</translation></message>
+<message><source>Send</source><translation>Отправить</translation></message>
+<message><source>Stop</source><translation>Стоп</translation></message>
+<message><source>Apply changes</source><translation>Применить изменения</translation></message>
+<message><source>Close</source><translation>Закрыть</translation></message>
+<message><source>Request cancelled. Document unchanged.</source><translation>Запрос отменён. Документ не изменён.</translation></message>
+<message><source>The request timed out. Try a smaller selection or check the server.</source><translation>Время запроса истекло. Попробуйте меньший фрагмент или проверьте сервер.</translation></message>
+<message><source>Could not protect the API key. Settings were not saved.</source><translation>Не удалось защитить ключ API. Настройки не сохранены.</translation></message>
+<message><source>Local Ollama: no API key required. The selected text/context is sent to the endpoint above.</source><translation>Локальная Ollama: ключ API не нужен. Выбранный текст и контекст отправляются по указанному адресу.</translation></message>
+<message><source>Requires Python 3.11+ and github-copilot-sdk. Use a GitHub token with Copilot access or existing Copilot authentication. Tools and project access are disabled.</source><translation>Нужны Python 3.11+ и github-copilot-sdk. Используйте токен GitHub с доступом Copilot или существующий вход Copilot. Инструменты и доступ к проекту отключены.</translation></message>
+<message><source>The chosen scope/context is sent to this provider. Use a provider API key; a chat subscription alone is not an API key.</source><translation>Выбранный текст и контекст отправляются этому провайдеру. Нужен ключ его API; подписка на чат сама по себе ключом API не является.</translation></message>
+<message><source>Choose and apply a coherent, readable color palette. Use a calm background, high-contrast body text and distinct accent colors. Preserve all content, labels, references and document structure. Explain the palette briefly in the summary.</source><translation>Подбери и примени согласованную, удобную для чтения цветовую гамму: спокойный фон, контрастный основной текст и различимые акценты. Сохрани всё содержимое, метки, ссылки и структуру документа. Кратко объясни палитру в описании изменений.</translation></message>
+<message><source>Recompose this Beamer slide so attention moves from element A to B to C. Use visual hierarchy, alignment, spacing and grouping. Preserve the meaning and all formulas. Use columns/blocks and, only where helpful, overlays to reveal the sequence. Identify A, B and C in the summary. Use packages already available in the document.</source><translation>Перестрой слайд Beamer так, чтобы внимание последовательно переходило от элемента А к Б, затем к В. Используй визуальную иерархию, выравнивание, интервалы и группировку. Сохрани смысл и все формулы. Используй колонки и блоки, а при необходимости — последовательное появление элементов. Укажи А, Б и В в описании изменений. Используй уже доступные в документе пакеты.</translation></message>
+<message><source>Choose a Python executable with github-copilot-sdk installed.</source><translation>Укажите исполняемый файл Python с установленным github-copilot-sdk.</translation></message>
+<message><source>Enter a valid HTTP(S) endpoint without embedded credentials.</source><translation>Введите корректный адрес HTTP(S) без встроенных учётных данных.</translation></message>
+<message><source>Use HTTPS when sending an API key to a remote server.</source><translation>Для отправки ключа API удалённому серверу используйте HTTPS.</translation></message>
+<message><source>Enter the provider API key or configure its environment variable.</source><translation>Введите ключ API провайдера или задайте соответствующую переменную окружения.</translation></message>
+<message><source>Choose non-empty source and enter an instruction.</source><translation>Выберите непустой текст и введите инструкцию.</translation></message>
+<message><source>The selected input is too large. Use a smaller selection.</source><translation>Выбранный текст слишком велик. Выделите меньший фрагмент.</translation></message>
+<message><source>Load or enter a model ID first.</source><translation>Сначала загрузите или введите идентификатор модели.</translation></message>
+<message><source>Checking provider availability...</source><translation>Проверка доступности провайдера...</translation></message>
+<message><source>Generating proposal. The document has not been changed.</source><translation>Подготовка предложения. Документ ещё не изменён.</translation></message>
+<message><source>The response exceeds the 4 MB limit.</source><translation>Ответ превышает ограничение 4 МБ.</translation></message>
+<message><source>Provider request failed (HTTP %1): %2</source><translation>Ошибка запроса к провайдеру (HTTP %1): %2</translation></message>
+<message><source>Provider returned an error.</source><translation>Провайдер вернул ошибку.</translation></message>
+<message><source>Connected, but no models were returned. Check the endpoint and account access.</source><translation>Соединение установлено, но модели не получены. Проверьте адрес API и доступ учётной записи.</translation></message>
+<message><source>Connected. %1 models returned by the provider.</source><translation>Подключено. Получено моделей: %1.</translation></message>
+<message><source>The response was truncated. Increase the output limit or use a smaller selection. Nothing was applied.</source><translation>Ответ обрезан. Увеличьте лимит ответа или выберите меньший фрагмент. Изменения не применены.</translation></message>
+<message><source>The provider returned no text. Check model access and the Provider response tab.</source><translation>Провайдер не вернул текст. Проверьте доступ к модели и вкладку «Ответ провайдера».</translation></message>
+<message><source>Too many changes in one response. Ask for a smaller task.</source><translation>В одном ответе слишком много правок. Разделите задачу на части.</translation></message>
+<message><source>A proposed change has no exact original text. Nothing was applied.</source><translation>Модель не указала точный исходный фрагмент для правки. Документ не изменён.</translation></message>
+<message><source>A proposed fragment is missing or ambiguous. Ask the model to use a larger exact fragment. Nothing was applied.</source><translation>Предложенный фрагмент не найден или встречается несколько раз. Повторите запрос с указанием более полного фрагмента. Документ не изменён.</translation></message>
+<message><source>The response changes text outside the selection. Enable related changes or ask for a selection-only edit.</source><translation>В ответе есть правки вне выделения. Разрешите связанные изменения или попросите изменить только выделенный фрагмент.</translation></message>
+<message><source>The proposed changes overlap. Nothing was applied.</source><translation>Предложенные правки пересекаются. Документ не изменён.</translation></message>
+<message><source>No changes were proposed.</source><translation>Модель не предложила изменений.</translation></message>
+<message><source>The proposed document is incomplete. Nothing was applied.</source><translation>Предлагаемый документ неполон. Изменения не применены.</translation></message>
+<message><source>Proposed changes: %1. Original lines: %2.
+%3
+Review before applying; Undo restores all changes in one step.</source><translation>Предложено правок: %1. Исходные строки: %2.
+%3
+Проверьте перед применением. Отмена восстановит все изменения одним действием.</translation></message>
+<message><source>Expected a list of exact changes. Try again or turn off related changes to replace only the selection.</source><translation>Модель не подготовила точные правки. Повторите запрос или отключите связанные изменения для замены только выделенного фрагмента.</translation></message>
+<message><source>Expected JSON with a non-empty replacement string. Try a stronger model or a smaller selection. The raw reply is available on the Provider response tab.</source><translation>Ожидался JSON с непустой строкой replacement. Попробуйте более мощную модель или меньший фрагмент. Исходный ответ доступен на вкладке «Ответ провайдера».</translation></message>
+<message><source>Review the replacement before applying. Undo restores the original in one step.
+%1</source><translation>Проверьте замену перед применением. Отмена восстановит исходный текст одним действием.
+%1</translation></message>
+<message><source>The original editor is unavailable or read-only.</source><translation>Исходный редактор недоступен или открыт только для чтения.</translation></message>
+<message><source>The document changed since this dialog opened. Reopen AI editing to use the current version.</source><translation>Документ изменился после открытия окна. Откройте ИИ-редактирование заново для работы с текущей версией.</translation></message>
+<message><source>Copilot bridge is missing from this build.</source><translation>В этой сборке отсутствует модуль подключения Copilot.</translation></message>
+<message><source>Copilot failed. Check Python, SDK/runtime installation and GitHub authentication.</source><translation>Ошибка Copilot. Проверьте Python, установку SDK и среды выполнения, а также авторизацию GitHub.</translation></message>
+<message><source>Could not start Python. Set the full Python executable path.</source><translation>Не удалось запустить Python. Укажите полный путь к его исполняемому файлу.</translation></message>
+<message><source>Request timeout (seconds):</source><translation>Время ожидания ответа (секунды):</translation></message>
+<message><source>The model returned an invalid response stream.</source><translation>Модель вернула некорректный или неполный поток ответа.</translation></message>
+<message><source>Receiving the model response: %1 characters. You can stop the request.</source><translation>Получение ответа: %1 символов. Запрос можно остановить.</translation></message>
 </context>
 </TS>

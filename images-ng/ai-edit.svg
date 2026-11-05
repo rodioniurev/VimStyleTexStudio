@@ -1,0 +1,7 @@
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<!-- Copyright (C) 2026 rodioniurev -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<path d="M3 3h17v13H9l-5 4v-4H3z" fill="#edf3fa" stroke="#315b90" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="m8 12 7-7 3 3-7 7-4 1z" fill="#55a679" stroke="#315b90" stroke-width="1.2" stroke-linejoin="round"/>
+<path d="m14 6 3 3M8 12l3 3" stroke="#edf3fa" stroke-width="1.2"/>
+</svg>

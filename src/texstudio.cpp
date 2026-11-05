@@ -1334,7 +1334,7 @@ void Texstudio::setupMenus()
     newManagedAction(menu, "aichat", tr("AI &Chat..."), SLOT(aiChat()));
     submenu = newManagedMenu(menu, "aiedit", tr("AI Editing"));
     submenu->menuAction()->setObjectName("main/wizards/aiedit");
-    newManagedAction(submenu, "custom", tr("Edit document or selection..."), SLOT(aiEdit()), QKeySequence(), "configure");
+    newManagedAction(submenu, "custom", tr("Edit with AI..."), SLOT(aiEdit()), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_Return), "ai-edit");
     newManagedAction(submenu, "colors", tr("Choose and apply colors..."), SLOT(aiEditColors()));
     newManagedAction(submenu, "composition", tr("Compose Beamer slide..."), SLOT(aiEditComposition()));
 
@@ -1564,7 +1564,7 @@ void Texstudio::setupMenus()
 		baseContextActions << getManagedActions(QStringList() << "main/edit2/pasteAsLatex" << "main/edit2/convertTo" << "main/edit/selection/selectAll");
 		baseContextActions << sep;
 		baseContextActions << getManagedActions(QStringList() << "previewLatex" << "removePreviewLatex", "main/edit2/");
-        baseContextActions << getManagedActions(QStringList() << "main/wizards/aiedit");
+        baseContextActions << getManagedActions(QStringList() << "main/wizards/aiedit/custom");
 		LatexEditorView::setBaseActions(baseContextActions);
 	}
 
@@ -6042,18 +6042,21 @@ void Texstudio::aiEdit()
 {
     if (!currentEditor()) return;
     AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 0, this);
+    connect(&dialog,&AIEditDialog::settingsRequested,this,[this] {qApp->setProperty("openAIEditSettings",true); generalOptions(); qApp->setProperty("openAIEditSettings",false);});
     dialog.exec();
 }
 void Texstudio::aiEditColors()
 {
     if (!currentEditor()) return;
     AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 1, this);
+    connect(&dialog,&AIEditDialog::settingsRequested,this,[this] {qApp->setProperty("openAIEditSettings",true); generalOptions(); qApp->setProperty("openAIEditSettings",false);});
     dialog.exec();
 }
 void Texstudio::aiEditComposition()
 {
     if (!currentEditor()) return;
     AIEditDialog dialog(currentEditor(), configManager.configBaseDir+"/ai-edit.ini", 2, this);
+    connect(&dialog,&AIEditDialog::settingsRequested,this,[this] {qApp->setProperty("openAIEditSettings",true); generalOptions(); qApp->setProperty("openAIEditSettings",false);});
     dialog.exec();
 }
 

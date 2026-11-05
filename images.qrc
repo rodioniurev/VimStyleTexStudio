@@ -1,5 +1,6 @@
 <RCC>
 <qresource prefix="/">
+    <file>images-ng/ai-edit.svg</file>
     <file>scripts/vimstyle/copilot_bridge.py</file>
 <file>images-ng/document-print.svg</file>
 <file>images-ng/vim-mode.svg</file>

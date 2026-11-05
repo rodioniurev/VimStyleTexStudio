@@ -429,7 +429,7 @@ ConfigManager::ConfigManager(QObject *parent): QObject (parent),
 #endif
 
 	managedToolBars.append(ManagedToolBar("Custom", QStringList()));
-	managedToolBars.append(ManagedToolBar("File", QStringList() << "main/file/new" << "main/file/open" << "main/file/save" << "main/file/close"));
+	managedToolBars.append(ManagedToolBar("File", QStringList() << "main/file/new" << "main/file/open" << "main/file/save" << "main/file/close" << "main/wizards/aiedit/custom"));
 	managedToolBars.append(ManagedToolBar("Edit", QStringList() << "main/edit/undo" << "main/edit/redo" << "main/edit/copy" << "main/edit/cut" << "main/edit/paste"));
 	managedToolBars.append(ManagedToolBar("Tools", QStringList() << "main/tools/quickbuild" << "main/tools/compile" << "main/tools/stopcompile" << "main/tools/view" << "main/tools/viewlog"));
 	managedToolBars.append(ManagedToolBar("Math", QStringList() << "tags/brackets/left" << "separator" << "tags/brackets/right"));
@@ -1216,6 +1216,13 @@ QSettings *ConfigManager::readSettings(bool reread)
 		}
 		if (mtb.actualActions.empty()) mtb.actualActions = mtb.defaults;
 	}
+    if (!config->value("AIEditToolbarInstalled",false).toBool()) {
+        for (ManagedToolBar &bar : managedToolBars) if (bar.name=="File") {
+            if (!bar.actualActions.contains("main/wizards/aiedit/custom")) bar.actualActions.append("main/wizards/aiedit/custom");
+            config->setValue("FileToolBar",bar.actualActions);
+        }
+        config->setValue("AIEditToolbarInstalled",true);
+    }
 	replacedIconsOnMenus = config->value("customIcons").toMap();
 
 	//--------------------appearance------------------------------------

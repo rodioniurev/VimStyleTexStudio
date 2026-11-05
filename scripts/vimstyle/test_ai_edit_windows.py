@@ -37,4 +37,22 @@ subprocess.run([str(sdk / 'bin/g++.exe'), '-mconsole', '-o', str(binary), '@ai_e
 import tempfile
 with tempfile.TemporaryDirectory(prefix='ai-edit-check-') as profile:
     Path(profile, 'texstudio.ini').write_text('[texmaker]\nGrammar\\Language Tool Autorun=false\n', encoding='utf-8')
-    subprocess.run([str(binary), profile, str(build)], cwd=build, env=env, check=True, timeout=360)
+    subprocess.run([str(binary), profile, str(build)], cwd=build, env=env, check=True, timeout=960)
+
+# Exercise the application's own ru_RU catalog lookup, without manually loading
+# a translator; this catches a stale regional catalog masking the updated ru file.
+import shutil
+with tempfile.TemporaryDirectory(prefix='ai-edit-regional-') as region:
+    region = Path(region)
+    regional_binary = region / 'ai_edit_smoke.exe'
+    shutil.copy2(binary, regional_binary)
+    (region / 'translations').mkdir()
+    for name in ['texstudio_ru.qm', 'texstudio_ru_RU.qm']:
+        shutil.copy2(source / 'translation' / name, region / 'translations' / name)
+    for name in ['qt_ru.qm', 'qtbase_ru.qm']:
+        shutil.copy2(sdk / 'share/qt6/translations' / name, region / 'translations' / name)
+    (region / 'profile').mkdir()
+    (region / 'profile/texstudio.ini').write_text('[texmaker]\nInterface\\Language=ru_RU\nGrammar\\Language Tool Autorun=false\n', encoding='utf-8')
+    regional_env = dict(env, TXS_TEST_EXPECT_REGIONAL='1')
+    regional_env.pop('TXS_TEST_LIVE_OLLAMA', None)
+    subprocess.run([str(regional_binary), str(region / 'profile'), str(build)], cwd=region, env=regional_env, check=True, timeout=120)

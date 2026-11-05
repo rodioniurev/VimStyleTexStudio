@@ -488,7 +488,7 @@ if(${TEXSTUDIO_ENABLE_TESTS})
     target_include_directories(texstudio PUBLIC src/tests)
 endif()
 if(WIN32)
-    target_link_libraries(texstudio PUBLIC Shlwapi)
+    target_link_libraries(texstudio PUBLIC Shlwapi Crypt32)
 endif()
 
 ## installation

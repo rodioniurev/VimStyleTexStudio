@@ -3461,6 +3461,8 @@ options again to only view the most common settings.</source>
         <source>Basic Key Mapping</source>
         <translation>Основная раскладка клавиш</translation>
     </message>
+<message><source>AI Editing</source><translation>ИИ-редактирование</translation></message>
+<message><source>Could not save AI editing settings.</source><translation>Не удалось сохранить настройки ИИ-редактирования.</translation></message>
 </context>
 <context>
     <name>ConfigManager</name>
@@ -13245,6 +13247,7 @@ to join: teamtype join %2</source>
     <message><source>Edit document or selection...</source><translation>Изменить документ или выделение...</translation></message>
     <message><source>Choose and apply colors...</source><translation>Подобрать и применить цвета...</translation></message>
     <message><source>Compose Beamer slide...</source><translation>Композиция слайда Beamer...</translation></message>
+<message><source>Edit with AI...</source><translation>Изменить с ИИ...</translation></message>
 </context>
 <context>
     <name>TextAnalysisDialog</name>
@@ -14471,5 +14474,33 @@ Do you trust this script?</source>
     <message><source>Copilot bridge is missing from this build.</source><translation>В этой сборке отсутствует модуль подключения Copilot.</translation></message>
     <message><source>Copilot failed. Check Python, SDK/runtime installation and GitHub authentication.</source><translation>Ошибка Copilot. Проверьте Python, установку SDK и среды выполнения, а также авторизацию GitHub.</translation></message>
     <message><source>Could not start Python. Set the full Python executable path.</source><translation>Не удалось запустить Python. Укажите полный путь к его исполняемому файлу.</translation></message>
+<message><source>Edit with AI</source><translation>Изменить с ИИ</translation></message>
+<message><source>API key or provider environment variable</source><translation>Ключ API или переменная окружения провайдера</translation></message>
+<message><source>Remember key securely for this Windows account</source><translation>Сохранить ключ с защитой для этой учётной записи Windows</translation></message>
+<message><source>What should change in the selected text?</source><translation>Что изменить в выделенном тексте?</translation></message>
+<message><source>What should change in this document?</source><translation>Что изменить в этом документе?</translation></message>
+<message><source>AI settings...</source><translation>Настройки ИИ...</translation></message>
+<message><source>Describe the change in your own words. Ctrl+Enter sends the request.</source><translation>Напишите своими словами, что нужно изменить. Ctrl+Enter — отправить запрос.</translation></message>
+<message><source>Allow related changes elsewhere in this document</source><translation>Разрешить связанные изменения в других частях этого документа</translation></message>
+<message><source>The whole current document is sent as context. All proposed changes are reviewed before application.</source><translation>Весь текущий документ отправляется как контекст. Все предлагаемые изменения показываются перед применением.</translation></message>
+<message><source>Settings are saved when you press OK in Configuration.</source><translation>Настройки сохраняются по кнопке ОК в окне конфигурации.</translation></message>
+<message><source>Describe the change, then send. Nothing is applied automatically.</source><translation>Опишите изменение и отправьте запрос. Правки не применяются автоматически.</translation></message>
+<message><source>Send</source><translation>Отправить</translation></message>
+<message><source>Could not protect the API key. Settings were not saved.</source><translation>Не удалось защитить ключ API. Настройки не сохранены.</translation></message>
+<message><source>Too many changes in one response. Ask for a smaller task.</source><translation>В одном ответе слишком много правок. Разделите задачу на части.</translation></message>
+<message><source>A proposed change has no exact original text. Nothing was applied.</source><translation>Модель не указала точный исходный фрагмент для правки. Документ не изменён.</translation></message>
+<message><source>A proposed fragment is missing or ambiguous. Ask the model to use a larger exact fragment. Nothing was applied.</source><translation>Предложенный фрагмент не найден или встречается несколько раз. Повторите запрос с указанием более полного фрагмента. Документ не изменён.</translation></message>
+<message><source>The response changes text outside the selection. Enable related changes or ask for a selection-only edit.</source><translation>В ответе есть правки вне выделения. Разрешите связанные изменения или попросите изменить только выделенный фрагмент.</translation></message>
+<message><source>The proposed changes overlap. Nothing was applied.</source><translation>Предложенные правки пересекаются. Документ не изменён.</translation></message>
+<message><source>No changes were proposed.</source><translation>Модель не предложила изменений.</translation></message>
+<message><source>Proposed changes: %1. Original lines: %2.
+%3
+Review before applying; Undo restores all changes in one step.</source><translation>Предложено правок: %1. Исходные строки: %2.
+%3
+Проверьте перед применением. Отмена восстановит все изменения одним действием.</translation></message>
+<message><source>Expected a list of exact changes. Try again or turn off related changes to replace only the selection.</source><translation>Модель не подготовила точные правки. Повторите запрос или отключите связанные изменения для замены только выделенного фрагмента.</translation></message>
+<message><source>Request timeout (seconds):</source><translation>Время ожидания ответа (секунды):</translation></message>
+<message><source>The model returned an invalid response stream.</source><translation>Модель вернула некорректный или неполный поток ответа.</translation></message>
+<message><source>Receiving the model response: %1 characters. You can stop the request.</source><translation>Получение ответа: %1 символов. Запрос можно остановить.</translation></message>
 </context>
 </TS>

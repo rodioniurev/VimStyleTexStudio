@@ -6,7 +6,15 @@
 - Add color-palette and Beamer composition task presets with editable instructions.
 - Support local Ollama, OpenAI API, Claude Messages, compatible servers and the
   official GitHub Copilot SDK bridge with tools and project discovery disabled.
-- Discover provider models, retain keys only in session memory and handle
+- Add a compact selection/instruction prompt, a direct context action and a
+  customizable toolbar button with Ctrl+Alt+Enter.
+- Move connection/model/limit settings into Configure TeXstudio > AI Editing;
+  support optional Windows DPAPI key storage and Configuration cancel.
+- Propose related edits across the current document using exact source fragments;
+  show changed lines and apply all reviewed changes with one Undo.
+- Stream local Ollama progress and make generation timeout configurable.
+- Update both Russian locale catalogs so ru_RU receives the new interface.
+- Discover provider models and handle
   cancellation, truncation, errors and source changes before applying.
 - Apply replacements explicitly in one undo step; add Russian UI translations.
 - Add mock provider, SDK contract and optional live local-model/LaTeX checks.

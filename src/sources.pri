@@ -1,4 +1,5 @@
 INCLUDEPATH += $$PWD
+win32: LIBS += -lcrypt32
 DEPENDPATH += $$PWD
 
 HEADERS += \

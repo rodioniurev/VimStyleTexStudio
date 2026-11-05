@@ -20,6 +20,7 @@
 
 #include "configdialog.h"
 #include "configmanager.h"
+#include "aieditdialog.h"
 
 #include "updatechecker.h"
 
@@ -568,6 +569,12 @@ ConfigDialog::ConfigDialog(QWidget *parent): QDialog(parent,Qt::Dialog|Qt::Windo
     // tweak all comboboxes in adv. editor pane to not change on scroll wheel as it messes with scrolling through the pane (#2977)
     tweakFocusSettings(ui.scrollAreaWidgetContents_2->children());
 
+    auto *aiEditSettings=new AIEditDialog(nullptr,config ? config->configBaseDir+"/ai-edit.ini" : QString(),0,this,true);
+    ui.pagesWidget->addWidget(aiEditSettings);
+    createIcon(tr("AI Editing"),getRealIcon("configure"));
+    connect(this,&QDialog::accepted,aiEditSettings,[this,aiEditSettings] {
+        if (!aiEditSettings->commitSettings()) QMessageBox::warning(this,tr("AI Editing"),tr("Could not save AI editing settings."));
+    });
 	Q_ASSERT(ui.pagesWidget->count() == ui.contentsWidget->count());
 
 	connect(ui.contentsWidget,
@@ -608,6 +615,7 @@ ConfigDialog::ConfigDialog(QWidget *parent): QDialog(parent,Qt::Dialog|Qt::Windo
     connect(ui.tbRevertPDF, SIGNAL(clicked()), this, SLOT(revertClicked()));
 
     // ai chat
+    ui.leAIAPIKey->setEchoMode(QLineEdit::Password);
     connect(ui.cbAIProvider, SIGNAL(currentIndexChanged(int)), this, SLOT(aiProviderChanged(int)));
     connect(ui.pbRetrieveModels, &QPushButton::clicked, this, &ConfigDialog::retrieveModels);
     connect(ui.pbResetAIURL, &QPushButton::clicked, this, &ConfigDialog::resetAIURL);
@@ -620,6 +628,8 @@ ConfigDialog::ConfigDialog(QWidget *parent): QDialog(parent,Qt::Dialog|Qt::Windo
     connect(ui.comboBoxCollaborativeTool, SIGNAL(currentIndexChanged(int)), this, SLOT(collaborativeEditingToolChanged(int))); // TODO: implement when needed
     connect(ui.pbSelectCollaborativeToolPath, SIGNAL(clicked()), this, SLOT(browseCollaborativeToolPath()));
     connect(ui.pbSelectClientFolder, &QPushButton::clicked, this, &ConfigDialog::browseCollaborativeClientFolder);
+
+    if (qApp->property("openAIEditSettings").toBool()) ui.contentsWidget->setCurrentRow(ui.pagesWidget->indexOf(aiEditSettings));
 
 }
 

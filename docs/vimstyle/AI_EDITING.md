@@ -1,26 +1,42 @@
 # AI editing with review and undo
 
-This local preview adds **Wizards > AI Editing** and the same submenu to the
-source editor's right-click menu. It complements the existing AI Chat dialog.
-Choose **Edit document or selection**, **Choose and apply colors**, or
-**Compose Beamer slide**. These actions do not send a request when opened.
+Select source text and press the **Edit with AI** toolbar button, choose the
+same action directly in the source editor's right-click menu, or press
+**Ctrl+Alt+Enter**. Write what should change in the compact prompt window.
+The existing AI Chat dialog remains available separately.
 
 ## Workflow
 
-1. Open a LaTeX file. To edit one Beamer slide, select its complete
-   `\begin{frame} ... \end{frame}` block before opening AI Editing.
-2. Choose the provider and model. **Check connection / load models** asks the
-   provider for models available to that account/server without sending source.
-3. Choose **Selected text** or **Whole current document**. For a selection,
-   the preamble can be included as read-only context; its checkbox controls this.
-4. Edit the instruction, then choose **Generate proposal**. The palette and
-   Beamer actions supply editable task instructions. The Beamer instruction
-   addresses hierarchy, alignment, spacing, grouping and optional overlays;
-   specify what A, B and C mean for your slide in the instruction.
-5. Compare **Original** and **Proposed replacement**. The proposal is editable.
-   **Apply changes** replaces only the chosen scope in the original editor.
-   The result is unsaved and can be undone with one Undo operation. Compile and
-   inspect the PDF with the usual Build & View command.
+1. Set up the provider once under **Options > Configure TeXstudio > AI Editing**.
+   Choose a provider/model, enter its key if required, and use **Check connection /
+   load models** to query availability without sending document text. Press **OK**.
+2. Select a fragment in the editor, then open **Edit with AI**. With no selection,
+   the action targets the current document. Type a natural-language instruction.
+3. Leave **Allow related changes elsewhere in this document** enabled when the
+   task needs definitions or usages outside the selection. This sends the whole
+   current file as context and permits related edits there. Turn it off to limit
+   changes to the selection, with the preamble supplied as read-only context.
+4. Press **Send** or **Ctrl+Enter**. Nothing is applied while generating.
+5. Review **Original** and **Proposed replacement** after the response arrives.
+   Related edits highlight changed original/result lines and list original line
+   numbers. The proposed result remains editable. Press **Apply changes** when
+   satisfied, then use Build & View to inspect the compiled PDF. Changes remain
+   unsaved and one Undo restores the original document.
+
+The **AI settings...** button opens the same Configuration page. Provider, model,
+keys and limits are kept out of the everyday prompt window. Color and Beamer
+presets remain available under **Wizards > AI Editing** and prefill an editable
+instruction.
+
+For example, select the hardcoded month name and ask:
+
+> Introduce \newcommand{\lang}{es}. Derive \calMonthName from \calMonth
+> (1–12) and \lang (es/en). Make all weekday names depend on \lang too.
+> Preserve the calendar structure and update related definitions where needed.
+
+Keep related changes enabled for this task. The model returns exact source
+fragments to replace; missing, ambiguous or overlapping fragments are rejected.
+It can propose changes in the current file's preamble, including dependencies.
 
 Closing the dialog or stopping a request leaves the document unchanged. A
 response cannot be applied if the original editor was closed, became read-only,
@@ -45,10 +61,13 @@ and quotas depend on the account. An OpenAI API key is distinct from signing in
 to the ChatGPT application. Claude and Copilot likewise require the appropriate
 API/account entitlement; a key from one provider does not authenticate another.
 
-Keys entered in this editing dialog are password-masked and retained only in
-process memory. They are not written to `ai-edit.ini`; provider, endpoint, model
-and token limits are saved there. Environment variables are read when choosing
-a provider. The existing AI Chat feature has its own settings and persistence.
+Keys entered in Configuration are password-masked. By default they are kept
+only in process memory; environment variables are also supported. On Windows,
+**Remember key securely for this Windows account** opts into DPAPI-encrypted
+storage in `ai-edit.ini`. This encrypted value is tied to the Windows account;
+it is not a portable plaintext key. Cancel in Configuration discards changes.
+Provider, endpoint, model and limits are saved in the same file. The existing
+AI Chat feature has separate settings and persistence.
 
 The new editing workflow exposes no editor tools or executable macros to HTTP
 models. Copilot runs through an embedded Python bridge in an isolated temporary
@@ -84,8 +103,11 @@ OpenAI and Claude keys are entered for their own providers.
 
 For a Windows laptop with 16 GB RAM and an RTX 3060 Laptop GPU with 6 GB VRAM,
 `qwen3:4b-instruct` (Q4_K_M, approximately 2.5 GB model download) is a reasonable
-starting choice that leaves more memory for context. This is a hardware-based
-recommendation, not a comparative TeX/composition benchmark.
+starting choice that leaves more memory for context. This describes memory
+fit, not a guarantee of LaTeX editing quality. In local checks it completed
+small color and Beamer tasks, but a month/weekday-language task degenerated
+into repeated TeX conditionals and timed out without changing the document.
+Review every proposal; complex transformations may need a stronger model.
 
 ```powershell
 ollama pull qwen3:4b-instruct
@@ -108,14 +130,17 @@ limits instead of these HTTP-provider output settings.
 
 - Source text is sent, not PDF pages or screenshots. Models do not inspect the
   actual rendered layout. Recompile and review the PDF after applying.
-- Only the current file/selection and optional preamble are sent. Included
-  files, images and bibliographies are not automatically read or modified.
-- Selection edits cannot alter package imports elsewhere. The prompt asks the
-  model to use available packages; whole-document mode can change the preamble.
+- Related changes send the whole current file; selection-only edits send the
+  selection and preamble. Included files, images and bibliographies are not
+  automatically read or modified.
+- With related changes off, a selection edit cannot alter package imports
+  elsewhere. Enable related changes when the task needs preamble edits.
 - Model-generated colors, layouts, content preservation and compilability need
   review. Source structure checks do not prove semantic correctness.
-- Generation is non-streaming, cancellable and limited to five minutes per
-  request; model discovery has a one-minute limit. Input is limited to one
+- Generation is cancellable. Ollama streams progress and received character
+  counts; other providers return the complete response. Request timeout is
+  configurable from 30 to 1800 seconds, default 600; model discovery has a
+  one-minute limit. A slow CPU model can take several minutes. Input is limited to one
   million characters of serialized source/context, responses to 4 MB for HTTP.
 - Endpoint redirects are not followed automatically. API keys require HTTPS
   for remote endpoints; loopback development endpoints can use HTTP.
@@ -157,11 +182,14 @@ python scripts/vimstyle/test_ai_edit_windows.py C:/msys64/ucrt64 . build-windows
 python scripts/vimstyle/test_copilot_bridge.py  # in an environment with the SDK
 ```
 
-Mock HTTP checks cover provider formats, model discovery, selection/preamble
-scope, explicit application/undo, stale documents, truncated/malformed replies,
-errors, cancellation and key persistence/redaction. `TXS_TEST_LIVE_OLLAMA=1`
-enables synthetic color and Beamer edits with local `qwen3:4b-instruct` (override
+Mock HTTP checks cover the quick prompt, direct context action, toolbar button,
+Configuration page, provider formats, model discovery, related edits and scope
+restrictions, explicit application/undo, stale documents, truncated/malformed
+replies, complete/incomplete Ollama streams, cancellation and encrypted key
+persistence/restoration. Regional Russian catalog lookup is checked separately. `TXS_TEST_LIVE_OLLAMA=1`
+enables synthetic color, Beamer and language-dependent calendar edits with local `qwen3:4b-instruct` (override
 with `TXS_TEST_OLLAMA_MODEL`);
-`TXS_TEST_LATEX` can specify pdflatex for compilation checks. No private document
+`TXS_TEST_LATEX` can specify pdflatex and `TXS_TEST_PDFTOTEXT` pdftotext for
+compilation and language/month output checks. No private document
 is used by these tests. Cloud account/model access requires the user's own key
 and is not established by mock protocol tests.
