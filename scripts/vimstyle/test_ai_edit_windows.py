@@ -50,7 +50,9 @@ with tempfile.TemporaryDirectory(prefix='ai-edit-regional-') as region:
     for name in ['texstudio_ru.qm', 'texstudio_ru_RU.qm']:
         shutil.copy2(source / 'translation' / name, region / 'translations' / name)
     for name in ['qt_ru.qm', 'qtbase_ru.qm']:
-        shutil.copy2(sdk / 'share/qt6/translations' / name, region / 'translations' / name)
+        framework_catalog = sdk / 'share/qt6/translations' / name
+        if framework_catalog.exists():
+            shutil.copy2(framework_catalog, region / 'translations' / name)
     (region / 'profile').mkdir()
     (region / 'profile/texstudio.ini').write_text('[texmaker]\nInterface\\Language=ru_RU\nGrammar\\Language Tool Autorun=false\n', encoding='utf-8')
     regional_env = dict(env, TXS_TEST_EXPECT_REGIONAL='1')
