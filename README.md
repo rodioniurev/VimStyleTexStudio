@@ -17,7 +17,7 @@ line motions. See [VIM_MODE.md](VIM_MODE.md) for examples and explicit limits.
 Compiled PDFs can be printed directly from the viewer's printer button or
 **right-click > Print PDF...**. See [PDF printing](docs/vimstyle/PDF_PRINTING.md).
 
-The local AI editing preview adds a toolbar button, **Ctrl+Alt+Enter** and a
+The 0.4 preview adds a toolbar button, **Ctrl+Alt+Enter** and a
 direct **Edit with AI** context action for reviewing and
 applying source changes from Ollama, OpenAI, Claude, compatible servers or the
 official Copilot SDK. It includes color-palette and Beamer composition tasks.

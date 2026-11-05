@@ -161,8 +161,8 @@ limits instead of these HTTP-provider output settings.
   are related closed discussions addressed by explicit scope and endpoint-based
   model discovery in the new workflow.
 
-No upstream comments, pull requests or releases were posted for this preview.
-Publication requires the user's test and explicit confirmation.
+Upstream discussions are linked for context. This feature is distributed in the
+unofficial VimStyleTexStudio preview; no upstream pull request has been submitted.
 
 ## Official integration references
 

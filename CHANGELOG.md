@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - AI editing preview
+## 0.4.0-preview.1 - 2026-11-05
 
 - Add review-based AI editing for a selection or the current LaTeX document.
 - Add color-palette and Beamer composition task presets with editable instructions.
