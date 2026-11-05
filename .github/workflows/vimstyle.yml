@@ -13,7 +13,7 @@ jobs:
   linux-vim-tests:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install Qt 5 build dependencies
         run: |
           sudo apt-get update
@@ -28,7 +28,7 @@ jobs:
   windows-vim-tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: msys2/setup-msys2@v2
         id: msys2
         with:
